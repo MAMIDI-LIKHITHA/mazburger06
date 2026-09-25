@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { categories, products, type Product } from "@/lib/menu";
+import { ThreeDBurger } from "@/components/ThreeDBurger";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -76,7 +77,7 @@ function Home() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <a href="#top" className="font-display text-2xl">MAZ <span className="text-primary">BURGER</span></a>
           <nav className="hidden gap-7 text-sm text-muted-foreground md:flex">
-            {[["Меню", "/menu"], ["О нас", "/about"], ["Доставка", "/delivery"], ["Контакты", "/contact"]].map(([n, href]) => (
+            {[[ "Меню", "/menu" ], [ "О нас", "/about" ], [ "Доставка", "/delivery" ], [ "Контакты", "/contact" ]].map(([n, href]) => (
               <a key={n} href={href} className="hover:text-foreground">{n}</a>
             ))}
           </nav>
@@ -89,7 +90,7 @@ function Home() {
       <section id="top" className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-card" />
         <div className="absolute -right-24 top-16 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 py-20 md:grid-cols-[0.9fr_1.1fr] md:py-28">
+        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 py-16 md:grid-cols-[0.9fr_1.1fr] md:py-24">
           <div className="relative z-10">
             <p className="mb-4 text-sm tracking-[0.3em] text-primary">СВЕЖЕЕ • ВКУСНОЕ • С НАСТРОЕНИЕМ</p>
             <h1 className="font-display text-6xl uppercase leading-[0.95] md:text-8xl">Яркий вкус.<br />Настоящие бургеры.</h1>
@@ -99,18 +100,15 @@ function Home() {
               <button onClick={() => setCartOpen(true)} className="rounded-full border border-border px-7 py-3 font-bold">Заказать ↗</button>
             </div>
           </div>
-          <div className="relative flex min-h-[420px] items-center justify-center [perspective:1600px] md:min-h-[560px]">
-            <div
-              className="pointer-events-none absolute inset-0 rounded-[3rem] bg-[url('/images/maz-burger-hero.png')] bg-cover bg-center opacity-35 blur-[1px]"
-              aria-hidden="true"
-            />
-            <div className="pointer-events-none absolute inset-0 rounded-[3rem] bg-gradient-to-b from-background/10 via-background/35 to-background/80" aria-hidden="true" />
-            <LayeredBurger scrollY={scrollY} />
+
+          <div className="relative flex min-h-[390px] items-center justify-center md:min-h-[560px]">
+            <div className="pointer-events-none absolute h-72 w-72 rounded-full bg-primary/15 blur-3xl md:h-96 md:w-96" aria-hidden="true" />
+            <ThreeDBurger scrollY={scrollY} />
           </div>
         </div>
       </section>
 
-<section id="menu" className="mx-auto max-w-6xl px-5 py-20">
+      <section id="menu" className="mx-auto max-w-6xl px-5 py-20">
         <p className="text-sm tracking-[0.3em] text-primary">НАШЕ МЕНЮ</p>
         <h2 className="font-display mt-2 text-5xl uppercase">То, ради чего хочется вернуться.</h2>
         <div className="mt-8 flex flex-wrap gap-2">
@@ -151,7 +149,7 @@ function Home() {
             <p className="mt-5 text-muted-foreground">MAZ BURGER создан с одной простой идеей: готовить бургеры, которые действительно хочется есть. Яркий вкус, качественные ингредиенты, свежеприготовленная еда и удобный заказ.</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            {[["Свежесть", "Качественные ингредиенты, приготовленные свежими для каждого заказа."], ["Яркий вкус", "Насыщенные соусы, хрустящие текстуры и удовольствие в каждом кусочке."], ["Быстро", "От выбора в меню до самовывоза или доставки — быстро и удобно."], ["Просто", "Выберите блюда, проверьте заказ и отправьте его за считанные секунды."]].map(([t, d]) => (
+            {[[ "Свежесть", "Качественные ингредиенты, приготовленные свежими для каждого заказа." ], [ "Яркий вкус", "Насыщенные соусы, хрустящие текстуры и удовольствие в каждом кусочке." ], [ "Быстро", "От выбора в меню до самовывоза или доставки — быстро и удобно." ], [ "Просто", "Выберите блюда, проверьте заказ и отправьте его за считанные секунды." ]].map(([t, d]) => (
               <div key={t} className="rounded-2xl border border-border p-5">
                 <h3 className="font-display text-2xl uppercase text-primary">{t}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{d}</p>
@@ -182,75 +180,6 @@ function Home() {
 
       {open && <ProductModal p={open} onЗакрыть={() => setOpen(null)} onAdd={(q, ex) => { add(open.id, q, ex); setOpen(null); setCartOpen(true); }} />}
       {cartOpen && <Cart cart={cart} total={total} adjust={adjust} onЗакрыть={() => setCartOpen(false)} onDone={() => setCart([])} />}
-    </div>
-  );
-}
-
-function LayeredBurger({ scrollY }: { scrollY: number }) {
-  const tilt = Math.min(Math.max(scrollY / 700, 0), 1);
-  const layers = [
-    { clip: "inset(0 0 86% 0)", fromY: -125, fromX: 18, rotate: -7, delay: 0 },
-    { clip: "inset(14% 0 70% 0)", fromY: -90, fromX: -14, rotate: 5, delay: 120 },
-    { clip: "inset(30% 0 56% 0)", fromY: -58, fromX: 16, rotate: -4, delay: 240 },
-    { clip: "inset(44% 0 42% 0)", fromY: 54, fromX: -16, rotate: 4, delay: 360 },
-    { clip: "inset(58% 0 27% 0)", fromY: 78, fromX: 12, rotate: -3, delay: 480 },
-    { clip: "inset(73% 0 14% 0)", fromY: 105, fromX: -10, rotate: 3, delay: 600 },
-    { clip: "inset(86% 0 0 0)", fromY: 135, fromX: 7, rotate: 0, delay: 720 },
-  ];
-
-  return (
-    <div
-      className="relative z-10 h-[350px] w-[330px] overflow-visible [perspective:1400px] [transform-style:preserve-3d] sm:h-[420px] sm:w-[390px] md:h-[500px] md:w-[500px]"
-      style={{
-        transform: `rotateX(${5 + tilt * 3}deg) rotateY(${-7 - tilt * 5}deg)`,
-      }}
-    >
-      <div className="absolute -inset-10 rounded-full bg-primary/15 blur-3xl" />
-
-      {layers.map((layer, i) => (
-        <div
-          key={i}
-          className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2.5rem]"
-          style={{
-            clipPath: layer.clip,
-            transform: `translate3d(${layer.fromX}px, ${layer.fromY}px, ${80 + i * 10}px) rotateZ(${layer.rotate}deg)`,
-            "--from-x": `${layer.fromX}px`,
-            "--from-y": `${layer.fromY}px`,
-            "--from-rotate": `${layer.rotate}deg`,
-            animation: "mazBurgerAssemble 1.35s cubic-bezier(.22,.8,.25,1) forwards",
-            animationDelay: `${layer.delay}ms`,
-          }}
-        >
-          <img
-            src="/images/maz-burger-hero.png"
-            alt=""
-            aria-hidden="true"
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-x-0 bottom-0 h-5 bg-black/25 blur-md" />
-        </div>
-      ))}
-
-      <div
-        className="pointer-events-none absolute -bottom-5 left-[10%] h-8 w-[80%] rounded-[50%] bg-black/70 blur-xl"
-        style={{ transform: "translateZ(-80px)" }}
-      />
-
-      <style>{`
-        @keyframes mazBurgerAssemble {
-          0% {
-            opacity: 0;
-            transform: translate3d(var(--from-x, 0px), var(--from-y, 0px), 180px) rotateZ(var(--from-rotate, 0deg)) scale(1.03);
-          }
-          35% {
-            opacity: 1;
-          }
-          100% {
-            opacity: 1;
-            transform: translate3d(0, 0, 0) rotateZ(0deg) scale(1);
-          }
-        }
-      `}</style>
     </div>
   );
 }
@@ -337,7 +266,7 @@ function Cart({ cart, total, adjust, onЗакрыть, onDone }: { cart: Line[];
               <input className={input} placeholder="Ваше имя" value={name} onChange={(e) => setName(e.target.value)} maxLength={60} />
               <input className={input} placeholder="Номер телефона" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={15} />
               <div className="grid grid-cols-2 gap-2">
-                {(["Доставка", "Самовывоз"] as const).map((m) => (
+                {([ "Доставка", "Самовывоз" ] as const).map((m) => (
                   <button key={m} onClick={() => setMethod(m)} className={`rounded-xl border py-2 text-sm ${method === m ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>{m}</button>
                 ))}
               </div>

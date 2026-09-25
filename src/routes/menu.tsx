@@ -21,11 +21,12 @@ function MenuPage() {
   const add = (id: number) => {
     try {
       const cart = JSON.parse(localStorage.getItem("mazCart") || "[]");
-      const key = String(id);
-      const found = cart.find((x: { key: string }) => x.key === key);
+      const found = cart.find((x: { id: number }) => Number(x.id) === id);
       const next = found
-        ? cart.map((x: { key: string; qty: number }) => x.key === key ? { ...x, qty: x.qty + 1 } : x)
-        : [...cart, { key, id, qty: 1, extra: 0, extras: [] }];
+        ? cart.map((x: { id: number; qty: number }) =>
+            Number(x.id) === id ? { ...x, id, qty: Number(x.qty || 0) + 1 } : x
+          )
+        : [...cart, { key: String(id), id, qty: 1, extra: 0, extras: [] }];
       localStorage.setItem("mazCart", JSON.stringify(next));
       const totalCount = next.reduce((sum: number, item: { qty: number }) => sum + item.qty, 0);
       setCartCount(totalCount);

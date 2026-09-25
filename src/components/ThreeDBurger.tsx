@@ -9,17 +9,18 @@ type BurgerPart = {
   z: number;
   spread: number;
   rotate: number;
+  finalY: number;
 };
 
 const parts: BurgerPart[] = [
-  { src: "/images/burger-3d/maz-burger-bottom-bun.png", alt: "Нижняя булочка", x: 185, y: 1290, w: 650, z: 5, spread: 190, rotate: -2 },
-  { src: "/images/burger-3d/maz-burger-patty.png", alt: "Говяжья котлета", x: 200, y: 1070, w: 625, z: 25, spread: 155, rotate: 1.5 },
-  { src: "/images/burger-3d/maz-burger-cheese.png", alt: "Сыр", x: 190, y: 900, w: 645, z: 45, spread: 125, rotate: -1 },
-  { src: "/images/burger-3d/maz-burger-onion.png", alt: "Красный лук", x: 220, y: 785, w: 580, z: 65, spread: 105, rotate: 2 },
-  { src: "/images/burger-3d/maz-burger-tomato.png", alt: "Помидоры", x: 190, y: 640, w: 635, z: 85, spread: 90, rotate: -1.5 },
-  { src: "/images/burger-3d/maz-burger-lettuce.png", alt: "Салат", x: 110, y: 435, w: 805, z: 105, spread: 72, rotate: 1 },
-  { src: "/images/burger-3d/maz-burger-sauce.png", alt: "Соус", x: 210, y: 325, w: 605, z: 125, spread: 52, rotate: -1 },
-  { src: "/images/burger-3d/maz-burger-top-bun.png", alt: "Верхняя булочка", x: 180, y: 25, w: 670, z: 150, spread: 30, rotate: 1.5 },
+  { src: "/images/burger-3d/maz-burger-bottom-bun.png", alt: "Нижняя булочка", x: 185, y: 1290, w: 650, z: 5, spread: 190, rotate: -2, finalY: 930 },
+  { src: "/images/burger-3d/maz-burger-patty.png", alt: "Говяжья котлета", x: 200, y: 1070, w: 625, z: 25, spread: 155, rotate: 1.5, finalY: 790 },
+  { src: "/images/burger-3d/maz-burger-cheese.png", alt: "Сыр", x: 190, y: 900, w: 645, z: 45, spread: 125, rotate: -1, finalY: 720 },
+  { src: "/images/burger-3d/maz-burger-onion.png", alt: "Красный лук", x: 220, y: 785, w: 580, z: 65, spread: 105, rotate: 2, finalY: 655 },
+  { src: "/images/burger-3d/maz-burger-tomato.png", alt: "Помидоры", x: 190, y: 640, w: 635, z: 85, spread: 90, rotate: -1.5, finalY: 585 },
+  { src: "/images/burger-3d/maz-burger-lettuce.png", alt: "Салат", x: 110, y: 435, w: 805, z: 105, spread: 72, rotate: 1, finalY: 490 },
+  { src: "/images/burger-3d/maz-burger-sauce.png", alt: "Соус", x: 210, y: 325, w: 605, z: 125, spread: 52, rotate: -1, finalY: 410 },
+  { src: "/images/burger-3d/maz-burger-top-bun.png", alt: "Верхняя булочка", x: 180, y: 25, w: 670, z: 150, spread: 30, rotate: 1.5, finalY: 300 },
 ];
 
 export function ThreeDBurger({ scrollY }: { scrollY: number }) {
@@ -59,7 +60,9 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
 
         {parts.map((part, index) => {
           const assembledX = (part.x / 1024) * 100;
-          const assembledY = (part.y / 1536) * 100;
+          const startY = (part.y / 1536) * 100;
+          const finalY = (part.finalY / 1536) * 100;
+          const assembledY = startY + (finalY - startY) * verticalProgress;
           const assembledW = (part.w / 1024) * 100;
           // Two-stage assembly:
           // 1) Vertical stacking first while the ingredients remain spread horizontally.
@@ -74,9 +77,6 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
           const horizontalEase = 1 - Math.pow(horizontalProgress, 1.8);
           const spread =
             horizontalEase * part.spread * direction;
-
-          const vertical =
-            (1 - verticalProgress) * (-110 - index * 8);
 
           const rotation =
             part.rotate +
@@ -95,28 +95,16 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
                 left: `${assembledX}%`,
                 top: `${assembledY}%`,
                 width: `${assembledW}%`,
-                transform: `translate3d(${spread}px, ${vertical}px, ${depth}px) rotateZ(${rotation}deg)`,
+                transform: `translate3d(${spread}px, 0, ${depth}px) rotateZ(${rotation}deg)`,
                 transformOrigin: "center center",
                 zIndex: index + 2,
-                opacity: Math.max(0, 1 - Math.max(0, Math.min((progress - 0.72) / 0.18, 1))),
+                opacity: 1,
                 filter: "drop-shadow(0 18px 16px rgba(0,0,0,0.28))",
                 transition: "transform 35ms cubic-bezier(0.22, 1, 0.36, 1), opacity 100ms ease-out",
               }}
             />
           );
         })}
-
-        <img
-          src="/images/maz-burger-hero.png"
-          alt="MAZ BURGER"
-          className="pointer-events-none absolute inset-0 h-full w-full object-contain"
-          style={{
-            opacity: Math.max(0, Math.min((progress - 0.72) / 0.28, 1)),
-            transform: `translateZ(220px) scale(${0.92 + Math.max(0, Math.min((progress - 0.82) / 0.18, 1)) * 0.08})`,
-            transition: "opacity 80ms ease-out, transform 80ms ease-out",
-            zIndex: 40,
-          }}
-        />
 
         <div
           className="pointer-events-none absolute bottom-[2%] left-1/2 h-[5%] w-[55%] -translate-x-1/2 rounded-[50%] bg-black/35 blur-2xl"

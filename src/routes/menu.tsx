@@ -61,7 +61,7 @@ function MenuPage() {
                 <div className="mt-4 flex items-center justify-between">
                   <span className="text-xl font-bold text-primary">₽{p.price}</span>
                   <div className="flex items-center gap-2">
-                    {itemCounts[p.id] > 0 && (
+                    {(itemCounts[p.id] ?? 0) > 0 && (
                       <span className="min-w-8 rounded-full border border-primary/30 bg-primary/10 px-2 py-2 text-center text-sm font-bold text-primary" title="Количество в корзине">
                         ×{itemCounts[p.id]}
                       </span>

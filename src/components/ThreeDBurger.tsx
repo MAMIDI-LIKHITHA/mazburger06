@@ -98,8 +98,9 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
                 transform: `translate3d(${spread}px, ${vertical}px, ${depth}px) rotateZ(${rotation}deg)`,
                 transformOrigin: "center center",
                 zIndex: index + 2,
+                opacity: Math.max(0, 1 - Math.max(0, Math.min((progress - 0.78) / 0.22, 1))),
                 filter: "drop-shadow(0 18px 16px rgba(0,0,0,0.28))",
-                transition: "transform 35ms cubic-bezier(0.22, 1, 0.36, 1)",
+                transition: "transform 35ms cubic-bezier(0.22, 1, 0.36, 1), opacity 100ms ease-out",
               }}
             />
           );
@@ -108,7 +109,7 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
         <img
           src="/images/maz-burger-hero.webp"
           alt="MAZ BURGER"
-          className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
           style={{
             opacity: Math.max(0, Math.min((progress - 0.82) / 0.18, 1)),
             transform: `translateZ(220px) scale(${0.92 + Math.max(0, Math.min((progress - 0.82) / 0.18, 1)) * 0.08})`,

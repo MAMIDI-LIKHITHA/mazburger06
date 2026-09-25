@@ -31,9 +31,23 @@ function Home() {
   const [open, setOpen] = useState<Product | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [cart, setCart] = useState<Line[]>([]);
+  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
     try { setCart(JSON.parse(localStorage.getItem("mazCart") || "[]")); } catch { /* ignore */ }
+  }, []);
+
+  useEffect(() => {
+    let frame = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => setScrollY(window.scrollY));
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
   useEffect(() => { localStorage.setItem("mazCart", JSON.stringify(cart)); }, [cart]);
 
@@ -85,25 +99,18 @@ function Home() {
               <button onClick={() => setCartOpen(true)} className="rounded-full border border-border px-7 py-3 font-bold">Заказать ↗</button>
             </div>
           </div>
-          <div className="relative flex min-h-[420px] items-center justify-center [perspective:1400px] md:min-h-[560px]">
-            <div className="absolute bottom-10 h-14 w-[78%] rounded-[50%] bg-black/60 blur-2xl" />
-            <div className="absolute h-72 w-72 rounded-full border border-primary/20 bg-primary/10 blur-[1px] shadow-[0_0_100px_rgba(255,120,0,0.18)] md:h-96 md:w-96" />
-            <div className="relative z-10 w-[92%] max-w-[560px] [transform-style:preserve-3d] [transform:rotateX(10deg)_rotateY(-18deg)_rotateZ(-2deg)_translateZ(55px)] transition-all duration-700 ease-out hover:-translate-y-4 hover:[transform:rotateX(5deg)_rotateY(-8deg)_rotateZ(-1deg)_translateZ(100px)_scale(1.06)]">
-              <div className="absolute -inset-5 rounded-[3rem] bg-primary/10 blur-2xl" />
-              <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 shadow-[35px_45px_60px_rgba(0,0,0,0.65),-10px_-10px_35px_rgba(255,255,255,0.05)]">
-                <img
-                  src="/images/maz-burger-hero.png"
-                  alt="Stacked MAZ burger with fresh toppings"
-                  fetchPriority="high"
-                  className="block w-full object-cover"
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-black/25" />
-              </div>
-              <div className="absolute -bottom-5 left-10 right-2 h-7 rounded-[50%] bg-black/70 blur-xl [transform:translateZ(-45px)_rotateX(70deg)]" />
-            </div>
+          <div className="relative flex min-h-[420px] items-center justify-center [perspective:1600px] md:min-h-[560px]">
+            <div
+              className="pointer-events-none absolute inset-0 rounded-[3rem] bg-[url('/images/maz-burger-hero.png')] bg-cover bg-center opacity-35 blur-[1px]"
+              aria-hidden="true"
+            />
+            <div className="pointer-events-none absolute inset-0 rounded-[3rem] bg-gradient-to-b from-background/10 via-background/35 to-background/80" aria-hidden="true" />
+            <LayeredBurger scrollY={scrollY} />
           </div>
+        </div>
+      </section>
 
-      <section id="menu" className="mx-auto max-w-6xl px-5 py-20">
+<section id="menu" className="mx-auto max-w-6xl px-5 py-20">
         <p className="text-sm tracking-[0.3em] text-primary">НАШЕ МЕНЮ</p>
         <h2 className="font-display mt-2 text-5xl uppercase">То, ради чего хочется вернуться.</h2>
         <div className="mt-8 flex flex-wrap gap-2">
@@ -175,6 +182,31 @@ function Home() {
 
       {open && <ProductModal p={open} onЗакрыть={() => setOpen(null)} onAdd={(q, ex) => { add(open.id, q, ex); setOpen(null); setCartOpen(true); }} />}
       {cartOpen && <Cart cart={cart} total={total} adjust={adjust} onЗакрыть={() => setCartOpen(false)} onDone={() => setCart([])} />}
+    </div>
+  );
+}
+
+function LayeredBurger({ scrollY }: { scrollY: number }) {
+  const progress = Math.min(Math.max(scrollY / 420, 0), 1);
+  const layer = (y: number, x: number, z: number, rx: number, ry: number, scale = 1) => ({
+    transform: `translate3d(${x * progress}px, ${y * progress}px, ${z * progress}px) rotateX(${rx * progress}deg) rotateY(${ry * progress}deg) scale(${scale})`,
+  });
+
+  return (
+    <div className="relative z-10 h-[350px] w-[330px] [transform-style:preserve-3d] sm:h-[420px] sm:w-[390px] md:h-[500px] md:w-[500px]">
+      <div className="absolute inset-0 rounded-full bg-primary/10 blur-3xl" />
+      <div className="absolute bottom-3 left-1/2 h-10 w-[72%] -translate-x-1/2 rounded-[50%] bg-black/70 blur-xl" />
+
+      <div className="absolute left-1/2 top-[58%] h-[22px] w-[74%] -translate-x-1/2 rounded-[50%] bg-[#e8b06b] shadow-[inset_0_-7px_8px_rgba(120,55,10,.35),0_14px_18px_rgba(0,0,0,.35)] transition-transform duration-100 ease-out" style={layer(4, 0, 0, 0, 0)} />
+      <div className="absolute left-1/2 top-[53%] h-[18px] w-[72%] -translate-x-1/2 rounded-[45%] bg-[#6b2115] shadow-[0_8px_12px_rgba(0,0,0,.45)] transition-transform duration-100 ease-out" style={layer(18, -3, 22, 3, -2)} />
+      <div className="absolute left-1/2 top-[48%] h-[16px] w-[78%] -translate-x-1/2 rounded-[50%] bg-gradient-to-r from-[#f6b51d] via-[#ffd84a] to-[#d99500] shadow-[0_7px_14px_rgba(0,0,0,.35)] transition-transform duration-100 ease-out" style={layer(30, 7, 45, -4, 4)} />
+      <div className="absolute left-1/2 top-[44%] h-[24px] w-[80%] -translate-x-1/2 rounded-[48%] bg-gradient-to-b from-[#4f9b37] to-[#23651f] shadow-[0_8px_12px_rgba(0,0,0,.35)] transition-transform duration-100 ease-out" style={layer(42, -8, 68, 4, -5)} />
+      <div className="absolute left-1/2 top-[39%] h-[18px] w-[76%] -translate-x-1/2 rounded-[45%] bg-gradient-to-r from-[#d8342d] via-[#ef5542] to-[#b82323] shadow-[0_6px_12px_rgba(0,0,0,.35)] transition-transform duration-100 ease-out" style={layer(55, 10, 88, -5, 5)} />
+      <div className="absolute left-1/2 top-[35%] h-[20px] w-[68%] -translate-x-1/2 rounded-[50%] bg-white/90 shadow-[0_5px_10px_rgba(0,0,0,.25)] transition-transform duration-100 ease-out" style={layer(67, -6, 105, 5, -4)} />
+      <div className="absolute left-1/2 top-[27%] h-[72px] w-[76%] -translate-x-1/2 rounded-[42%] bg-gradient-to-b from-[#4f3424] via-[#6d3d25] to-[#2d1b13] shadow-[inset_0_-12px_14px_rgba(0,0,0,.35),0_14px_20px_rgba(0,0,0,.45)] transition-transform duration-100 ease-out" style={layer(82, 4, 125, -4, 4)} />
+      <div className="absolute left-1/2 top-[21%] h-[20px] w-[73%] -translate-x-1/2 rounded-[50%] bg-[#6b2115] shadow-[0_8px_12px_rgba(0,0,0,.35)] transition-transform duration-100 ease-out" style={layer(99, -8, 145, 5, -5)} />
+      <div className="absolute left-1/2 top-[7%] h-[100px] w-[82%] -translate-x-1/2 rounded-[50%_50%_38%_38%] bg-gradient-to-b from-[#f6c477] via-[#d9903e] to-[#a75b22] shadow-[inset_0_-18px_20px_rgba(120,55,10,.35),0_20px_28px_rgba(0,0,0,.45)] transition-transform duration-100 ease-out" style={layer(122, 0, 170, -6, 5, 1.02)} />
+      <div className="pointer-events-none absolute left-1/2 top-[12%] h-2 w-2 -translate-x-1/2 rounded-full bg-white shadow-[32px_8px_0_white,-28px_12px_0_white,55px_28px_0_white,-50px_32px_0_white,12px_38px_0_white] transition-transform duration-100 ease-out" style={layer(135, 0, 190, 0, 0)} />
     </div>
   );
 }

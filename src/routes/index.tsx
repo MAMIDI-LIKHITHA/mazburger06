@@ -188,25 +188,59 @@ function Home() {
 
 function LayeredBurger({ scrollY }: { scrollY: number }) {
   const progress = Math.min(Math.max(scrollY / 420, 0), 1);
-  const layer = (y: number, x: number, z: number, rx: number, ry: number, scale = 1) => ({
-    transform: `translate3d(${x * progress}px, ${y * progress}px, ${z * progress}px) rotateX(${rx * progress}deg) rotateY(${ry * progress}deg) scale(${scale})`,
+  const layers = [
+    { clip: "inset(0 0 86% 0)", y: -28, x: 10, z: 140, rx: -5, ry: 4 },
+    { clip: "inset(14% 0 70% 0)", y: -16, x: -8, z: 105, rx: 3, ry: -3 },
+    { clip: "inset(30% 0 56% 0)", y: 4, x: 13, z: 75, rx: -2, ry: 4 },
+    { clip: "inset(44% 0 42% 0)", y: 18, x: -11, z: 48, rx: 3, ry: -4 },
+    { clip: "inset(58% 0 27% 0)", y: 28, x: 9, z: 28, rx: -3, ry: 3 },
+    { clip: "inset(73% 0 14% 0)", y: 18, x: -7, z: 12, rx: 2, ry: -2 },
+    { clip: "inset(86% 0 0 0)", y: 8, x: 4, z: 0, rx: 0, ry: 0 },
+  ];
+
+  const transform = (l: typeof layers[number]) => ({
+    transform: `translate3d(${l.x * progress}px, ${l.y * progress}px, ${l.z * progress}px) rotateX(${l.rx * progress}deg) rotateY(${l.ry * progress}deg)`,
+    clipPath: l.clip,
   });
 
   return (
-    <div className="relative z-10 h-[350px] w-[330px] [transform-style:preserve-3d] sm:h-[420px] sm:w-[390px] md:h-[500px] md:w-[500px]">
-      <div className="absolute inset-0 rounded-full bg-primary/10 blur-3xl" />
-      <div className="absolute bottom-3 left-1/2 h-10 w-[72%] -translate-x-1/2 rounded-[50%] bg-black/70 blur-xl" />
+    <div
+      className="relative z-10 h-[350px] w-[330px] overflow-visible [perspective:1600px] [transform-style:preserve-3d] sm:h-[420px] sm:w-[390px] md:h-[500px] md:w-[500px]"
+      style={{ transform: `rotateX(${5 + progress * 2}deg) rotateY(${-8 - progress * 4}deg)` }}
+    >
+      <div className="absolute -inset-8 rounded-full bg-primary/10 blur-3xl" />
+      <div
+        className="absolute inset-0 overflow-hidden rounded-[2.5rem] border border-white/10 shadow-[25px_35px_55px_rgba(0,0,0,.55)]"
+        style={{ opacity: Math.max(0.08, 1 - progress * 0.72) }}
+      >
+        <img
+          src="/images/maz-burger-hero.png"
+          alt=""
+          aria-hidden="true"
+          className="h-full w-full object-cover"
+        />
+      </div>
 
-      <div className="absolute left-1/2 top-[58%] h-[22px] w-[74%] -translate-x-1/2 rounded-[50%] bg-[#e8b06b] shadow-[inset_0_-7px_8px_rgba(120,55,10,.35),0_14px_18px_rgba(0,0,0,.35)] transition-transform duration-100 ease-out" style={layer(4, 0, 0, 0, 0)} />
-      <div className="absolute left-1/2 top-[53%] h-[18px] w-[72%] -translate-x-1/2 rounded-[45%] bg-[#6b2115] shadow-[0_8px_12px_rgba(0,0,0,.45)] transition-transform duration-100 ease-out" style={layer(18, -3, 22, 3, -2)} />
-      <div className="absolute left-1/2 top-[48%] h-[16px] w-[78%] -translate-x-1/2 rounded-[50%] bg-gradient-to-r from-[#f6b51d] via-[#ffd84a] to-[#d99500] shadow-[0_7px_14px_rgba(0,0,0,.35)] transition-transform duration-100 ease-out" style={layer(30, 7, 45, -4, 4)} />
-      <div className="absolute left-1/2 top-[44%] h-[24px] w-[80%] -translate-x-1/2 rounded-[48%] bg-gradient-to-b from-[#4f9b37] to-[#23651f] shadow-[0_8px_12px_rgba(0,0,0,.35)] transition-transform duration-100 ease-out" style={layer(42, -8, 68, 4, -5)} />
-      <div className="absolute left-1/2 top-[39%] h-[18px] w-[76%] -translate-x-1/2 rounded-[45%] bg-gradient-to-r from-[#d8342d] via-[#ef5542] to-[#b82323] shadow-[0_6px_12px_rgba(0,0,0,.35)] transition-transform duration-100 ease-out" style={layer(55, 10, 88, -5, 5)} />
-      <div className="absolute left-1/2 top-[35%] h-[20px] w-[68%] -translate-x-1/2 rounded-[50%] bg-white/90 shadow-[0_5px_10px_rgba(0,0,0,.25)] transition-transform duration-100 ease-out" style={layer(67, -6, 105, 5, -4)} />
-      <div className="absolute left-1/2 top-[27%] h-[72px] w-[76%] -translate-x-1/2 rounded-[42%] bg-gradient-to-b from-[#4f3424] via-[#6d3d25] to-[#2d1b13] shadow-[inset_0_-12px_14px_rgba(0,0,0,.35),0_14px_20px_rgba(0,0,0,.45)] transition-transform duration-100 ease-out" style={layer(82, 4, 125, -4, 4)} />
-      <div className="absolute left-1/2 top-[21%] h-[20px] w-[73%] -translate-x-1/2 rounded-[50%] bg-[#6b2115] shadow-[0_8px_12px_rgba(0,0,0,.35)] transition-transform duration-100 ease-out" style={layer(99, -8, 145, 5, -5)} />
-      <div className="absolute left-1/2 top-[7%] h-[100px] w-[82%] -translate-x-1/2 rounded-[50%_50%_38%_38%] bg-gradient-to-b from-[#f6c477] via-[#d9903e] to-[#a75b22] shadow-[inset_0_-18px_20px_rgba(120,55,10,.35),0_20px_28px_rgba(0,0,0,.45)] transition-transform duration-100 ease-out" style={layer(122, 0, 170, -6, 5, 1.02)} />
-      <div className="pointer-events-none absolute left-1/2 top-[12%] h-2 w-2 -translate-x-1/2 rounded-full bg-white shadow-[32px_8px_0_white,-28px_12px_0_white,55px_28px_0_white,-50px_32px_0_white,12px_38px_0_white] transition-transform duration-100 ease-out" style={layer(135, 0, 190, 0, 0)} />
+      {layers.map((l, i) => (
+        <div
+          key={i}
+          className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2.5rem] transition-transform duration-100 ease-out"
+          style={transform(l)}
+        >
+          <img
+            src="/images/maz-burger-hero.png"
+            alt=""
+            aria-hidden="true"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-x-0 bottom-0 h-8 bg-black/20 blur-md" />
+        </div>
+      ))}
+
+      <div
+        className="pointer-events-none absolute -bottom-5 left-[10%] h-8 w-[80%] rounded-[50%] bg-black/65 blur-xl transition-transform duration-100 ease-out"
+        style={{ transform: `translate3d(0, ${progress * 18}px, -60px) scaleX(${1 + progress * 0.08})` }}
+      />
     </div>
   );
 }

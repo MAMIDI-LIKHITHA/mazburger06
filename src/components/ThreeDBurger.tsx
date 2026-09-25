@@ -105,6 +105,18 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
           );
         })}
 
+        <img
+          src="/images/maz-burger-hero.webp"
+          alt="MAZ BURGER"
+          className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+          style={{
+            opacity: Math.max(0, Math.min((progress - 0.82) / 0.18, 1)),
+            transform: `translateZ(220px) scale(${0.92 + Math.max(0, Math.min((progress - 0.82) / 0.18, 1)) * 0.08})`,
+            transition: "opacity 80ms ease-out, transform 80ms ease-out",
+            zIndex: 40,
+          }}
+        />
+
         <div
           className="pointer-events-none absolute bottom-[2%] left-1/2 h-[5%] w-[55%] -translate-x-1/2 rounded-[50%] bg-black/35 blur-2xl"
           aria-hidden="true"

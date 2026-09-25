@@ -91,7 +91,7 @@ function Home() {
               src="/images/maz-burger-hero.webp"
               alt="Stacked MAZ burger with fresh toppings"
               fetchPriority="high"
-              className="relative z-10 w-full max-w-xl object-contain drop-shadow-[0_30px_35px_rgba(0,0,0,0.45)] transition-transform duration-500 ease-out hover:-translate-y-2 hover:rotate-1 hover:scale-[1.03] motion-safe:animate-[mazFloat_5s_ease-in-out_infinite]"
+              className="relative z-10 w-full max-w-md object-contain drop-shadow-[0_30px_35px_rgba(0,0,0,0.55)] [transform:perspective(1200px)_rotateX(4deg)_rotateY(-8deg)_translateZ(20px)] transition-transform duration-500 ease-out hover:-translate-y-3 hover:[transform:perspective(1200px)_rotateX(2deg)_rotateY(-3deg)_translateZ(45px)_scale(1.04)] will-change-transform motion-safe:animate-[mazFloat_5s_ease-in-out_infinite]"
             />
           </div>
         </div>

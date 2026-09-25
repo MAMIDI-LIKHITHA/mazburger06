@@ -11,8 +11,8 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "Fresh, juicy burgers made for serious cravings. Order online in seconds." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:image", content: products[5].img },
-      { name: "twitter:image", content: products[5].img },
+      { property: "og:image", content: "/images/maz-burger-hero.webp" },
+      { name: "twitter:image", content: "/images/maz-burger-hero.webp" },
     ],
   }),
   component: Home,
@@ -73,15 +73,26 @@ function Home() {
       </header>
 
       <section id="top" className="relative overflow-hidden">
-        <img src={products[5].img} alt="Stacked MAZ burger" className="absolute inset-0 h-full w-full object-cover opacity-35" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-        <div className="relative mx-auto max-w-6xl px-5 py-28 md:py-40">
-          <p className="mb-4 text-sm tracking-[0.3em] text-primary">MADE FRESH • SERVED BOLD</p>
-          <h1 className="font-display text-6xl uppercase leading-[0.95] md:text-8xl">Big flavor.<br />Real burgers.</h1>
-          <p className="mt-6 max-w-md text-lg text-muted-foreground">Fresh, juicy burgers made for serious cravings.</p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#menu" className="rounded-full bg-primary px-7 py-3 font-bold text-primary-foreground">View Menu</a>
-            <button onClick={() => setCartOpen(true)} className="rounded-full border border-border px-7 py-3 font-bold">Order Now ↗</button>
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-card" />
+        <div className="absolute -right-24 top-16 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
+        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 py-20 md:grid-cols-[0.9fr_1.1fr] md:py-28">
+          <div className="relative z-10">
+            <p className="mb-4 text-sm tracking-[0.3em] text-primary">MADE FRESH • SERVED BOLD</p>
+            <h1 className="font-display text-6xl uppercase leading-[0.95] md:text-8xl">Big flavor.<br />Real burgers.</h1>
+            <p className="mt-6 max-w-md text-lg text-muted-foreground">Fresh, juicy burgers made for serious cravings.</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a href="#menu" className="rounded-full bg-primary px-7 py-3 font-bold text-primary-foreground">View Menu</a>
+              <button onClick={() => setCartOpen(true)} className="rounded-full border border-border px-7 py-3 font-bold">Order Now ↗</button>
+            </div>
+          </div>
+          <div className="relative flex min-h-[360px] items-center justify-center [perspective:1200px] md:min-h-[520px]">
+            <div className="absolute bottom-8 h-10 w-3/4 rounded-full bg-black/40 blur-2xl" />
+            <img
+              src="/images/maz-burger-hero.webp"
+              alt="Stacked MAZ burger with fresh toppings"
+              fetchPriority="high"
+              className="relative z-10 w-full max-w-xl object-contain drop-shadow-[0_30px_35px_rgba(0,0,0,0.45)] transition-transform duration-500 ease-out hover:-translate-y-2 hover:rotate-1 hover:scale-[1.03] motion-safe:animate-[mazFloat_5s_ease-in-out_infinite]"
+            />
           </div>
         </div>
       </section>

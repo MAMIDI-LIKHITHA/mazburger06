@@ -36,20 +36,20 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
     return () => window.removeEventListener("pointermove", onMove);
   }, []);
 
-  const progress = Math.min(Math.max(scrollY / 280, 0), 1);
+  const progress = Math.min(Math.max(scrollY / 220, 0), 1);
 
   return (
     <div
       className="relative z-10 flex w-full max-w-[600px] items-center justify-center"
-      style={{ perspective: "1400px" }}
+      style={{ perspective: "1600px" }}
     >
       <div
         className="relative w-[min(78vw,460px)]"
         style={{
           aspectRatio: "1024 / 1536",
           transformStyle: "preserve-3d",
-          transform: `translateY(${-progress * 18}px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-          transition: "transform 180ms ease-out",
+          transform: `translateY(${-progress * 22}px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+          transition: "transform 120ms ease-out",
         }}
       >
         <div
@@ -61,10 +61,16 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
           const assembledX = (part.x / 1024) * 100;
           const assembledY = (part.y / 1536) * 100;
           const assembledW = (part.w / 1024) * 100;
+          const layerStart = index * 0.07;
+          const layerProgress = Math.min(
+            Math.max((progress - layerStart) / (1 - layerStart), 0),
+            1
+          );
           const direction = index % 2 === 0 ? 1 : -1;
-          const spread = (1 - progress) * part.spread * direction;
-          const rotation = part.rotate + (1 - progress) * direction * 5;
-          const depth = part.z + (1 - progress) * 70;
+          const spread = (1 - layerProgress) * part.spread * direction;
+          const vertical = (1 - layerProgress) * (-18 - index * 3);
+          const rotation = part.rotate + (1 - layerProgress) * direction * 7;
+          const depth = part.z + (1 - layerProgress) * 100;
 
           return (
             <img
@@ -76,11 +82,11 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
                 left: `${assembledX}%`,
                 top: `${assembledY}%`,
                 width: `${assembledW}%`,
-                transform: `translate3d(${spread}px, ${-spread * 0.18}px, ${depth}px) rotateZ(${rotation}deg)`,
+                transform: `translate3d(${spread}px, ${vertical}px, ${depth}px) rotateZ(${rotation}deg)`,
                 transformOrigin: "center center",
                 zIndex: index + 2,
                 filter: "drop-shadow(0 18px 16px rgba(0,0,0,0.28))",
-                transition: "transform 90ms linear",
+                transition: "transform 70ms cubic-bezier(0.22, 1, 0.36, 1)",
               }}
             />
           );

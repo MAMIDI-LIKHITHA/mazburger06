@@ -11,8 +11,8 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "Fresh, juicy burgers made for serious cravings. Order online in seconds." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:image", content: "/images/maz-burger-hero.webp" },
-      { name: "twitter:image", content: "/images/maz-burger-hero.webp" },
+      { property: "og:image", content: "/images/maz-burger-hero.png" },
+      { name: "twitter:image", content: "/images/maz-burger-hero.png" },
     ],
   }),
   component: Home,
@@ -92,7 +92,7 @@ function Home() {
               <div className="absolute -inset-5 rounded-[3rem] bg-primary/10 blur-2xl" />
               <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 shadow-[35px_45px_60px_rgba(0,0,0,0.65),-10px_-10px_35px_rgba(255,255,255,0.05)]">
                 <img
-                  src="/images/maz-burger-hero.webp"
+                  src="/images/maz-burger-hero.png"
                   alt="Stacked MAZ burger with fresh toppings"
                   fetchPriority="high"
                   className="block w-full object-cover"

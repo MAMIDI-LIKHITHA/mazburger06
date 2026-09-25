@@ -146,60 +146,6 @@ function BurgerLayers({ progress }: { progress: React.MutableRefObject<number> }
   );
 }
 
-function Scene({ scrollY, assembled }: { scrollY: number; assembled: boolean }) {
-  const root = useRef<THREE.Group>(null);
-  const progress = useRef(0);
-  const rot = useRef({ x: 0.15, y: -0.4 });
-  const drag = useRef<{ active: boolean; x: number; y: number; rx: number; ry: number }>({
-    active: false,
-    x: 0,
-    y: 0,
-    rx: 0,
-    ry: 0,
-  });
-
-  const reduceMotion = useMemo(
-    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    [],
-  );
-
-  useFrame(({ clock }, rawDelta) => {
-    const dt = Math.min(rawDelta, 0.05);
-    const scrollProgress = Math.min(Math.max(scrollY / 45, 0), 1);
-    const target = Math.max(scrollProgress, assembled ? 1 : 0);
-    progress.current += (target - progress.current) * (1 - Math.exp(-5 * dt));
-
-    if (root.current) {
-      const t = clock.getElapsedTime();
-      const sway = reduceMotion || drag.current.active ? 0 : Math.sin(t * 0.6) * 0.08;
-      root.current.rotation.y += (rot.current.y + sway - root.current.rotation.y) * (1 - Math.exp(-8 * dt));
-      root.current.rotation.x += (rot.current.x - root.current.rotation.x) * (1 - Math.exp(-8 * dt));
-    }
-  });
-
-  return (
-    <>
-      <ambientLight intensity={0.55} />
-      <directionalLight position={[3, 5, 4]} intensity={1.6} castShadow shadow-mapSize={[1024, 1024]} />
-      <spotLight position={[-4, 3, -2]} intensity={0.8} color="#ffb066" angle={0.6} penumbra={1} />
-
-      <group ref={root}>
-        <Float speed={reduceMotion ? 0 : 1.6} rotationIntensity={0} floatIntensity={reduceMotion ? 0 : 0.35}>
-          <BurgerLayers progress={progress} />
-        </Float>
-      </group>
-
-      <ContactShadows position={[0, -1.15, 0]} opacity={0.45} scale={6} blur={2.6} far={2.4} color="#1a0d05" />
-
-      <Environment resolution={64}>
-        <Lightformer intensity={2} position={[0, 5, 0]} scale={[10, 10, 1]} />
-        <Lightformer intensity={1} color="#ffb066" position={[-5, 1, -1]} rotation-y={Math.PI / 2} scale={[20, 1, 1]} />
-        <Lightformer intensity={0.8} color="#fff2e0" position={[5, 2, 2]} rotation-y={-Math.PI / 2} scale={[12, 2, 1]} />
-      </Environment>
-    </>
-  );
-}
-
 export default function BurgerScene({ scrollY }: { scrollY: number }) {
   const [assembled, setAssembled] = useState(false);
   const dragInfo = useRef({ x: 0, y: 0, moved: 0, active: false });

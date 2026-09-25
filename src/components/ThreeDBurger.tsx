@@ -107,9 +107,9 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
         })}
 
         <img
-          src="/images/maz-burger-hero.webp"
+          src="/images/maz-burger-hero.png"
           alt="MAZ BURGER"
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+          className="pointer-events-none absolute inset-0 h-full w-full object-contain"
           style={{
             opacity: Math.max(0, Math.min((progress - 0.72) / 0.28, 1)),
             transform: `translateZ(220px) scale(${0.92 + Math.max(0, Math.min((progress - 0.82) / 0.18, 1)) * 0.08})`,

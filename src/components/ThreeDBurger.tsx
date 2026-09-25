@@ -59,15 +59,13 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
         />
 
         {parts.map((part, index) => {
+          // Two-stage assembly: vertical stacking first, then horizontal attachment.
+          const verticalProgress = Math.min(progress / 0.5, 1);
           const assembledX = (part.x / 1024) * 100;
           const startY = (part.y / 1536) * 100;
           const finalY = (part.finalY / 1536) * 100;
           const assembledY = startY + (finalY - startY) * verticalProgress;
           const assembledW = (part.w / 1024) * 100;
-          // Two-stage assembly:
-          // 1) Vertical stacking first while the ingredients remain spread horizontally.
-          // 2) Horizontal attachment second, pulling every layer into its final position.
-          const verticalProgress = Math.min(progress / 0.5, 1);
           const horizontalProgress = Math.min(
             Math.max((progress - 0.5) / 0.3, 0),
             1

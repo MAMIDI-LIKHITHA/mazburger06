@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { categories, products, type Product } from "@/lib/menu";
 
 export const Route = createFileRoute("/")({
@@ -72,34 +72,16 @@ function Home() {
         </div>
       </header>
 
-      <section id="top" className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-card" />
-        <div className="absolute -right-24 top-16 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 py-20 md:grid-cols-[0.9fr_1.1fr] md:py-28">
-          <div className="relative z-10">
+      <section id="top" className="relative isolate overflow-hidden">
+        <HeroParallaxBg />
+        <div className="relative z-10 mx-auto max-w-6xl px-5 py-24 md:py-36">
+          <div className="max-w-2xl">
             <p className="mb-4 text-sm tracking-[0.3em] text-primary">СВЕЖЕЕ • ВКУСНОЕ • С НАСТРОЕНИЕМ</p>
             <h1 className="font-display text-6xl uppercase leading-[0.95] md:text-8xl">Яркий вкус.<br />Настоящие бургеры.</h1>
             <p className="mt-6 max-w-md text-lg text-muted-foreground">Свежие сочные бургеры для настоящего удовольствия.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a href="#menu" className="rounded-full bg-primary px-7 py-3 font-bold text-primary-foreground">Посмотреть меню</a>
-              <button onClick={() => setCartOpen(true)} className="rounded-full border border-border px-7 py-3 font-bold">Заказать ↗</button>
-            </div>
-          </div>
-          <div className="relative flex min-h-[420px] items-center justify-center [perspective:1400px] md:min-h-[560px]">
-            <div className="absolute bottom-10 h-14 w-[78%] rounded-[50%] bg-black/60 blur-2xl" />
-            <div className="absolute h-72 w-72 rounded-full border border-primary/20 bg-primary/10 blur-[1px] shadow-[0_0_100px_rgba(255,120,0,0.18)] md:h-96 md:w-96" />
-            <div className="relative z-10 w-[92%] max-w-[560px] [transform-style:preserve-3d] [transform:rotateX(10deg)_rotateY(-18deg)_rotateZ(-2deg)_translateZ(55px)] transition-all duration-700 ease-out hover:-translate-y-4 hover:[transform:rotateX(5deg)_rotateY(-8deg)_rotateZ(-1deg)_translateZ(100px)_scale(1.06)]">
-              <div className="absolute -inset-5 rounded-[3rem] bg-primary/10 blur-2xl" />
-              <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 shadow-[35px_45px_60px_rgba(0,0,0,0.65),-10px_-10px_35px_rgba(255,255,255,0.05)]">
-                <img
-                  src="/images/maz-burger-hero.png"
-                  alt="Stacked MAZ burger with fresh toppings"
-                  fetchPriority="high"
-                  className="block w-full object-cover"
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-black/25" />
-              </div>
-              <div className="absolute -bottom-5 left-10 right-2 h-7 rounded-[50%] bg-black/70 blur-xl [transform:translateZ(-45px)_rotateX(70deg)]" />
+              <button onClick={() => setCartOpen(true)} className="rounded-full border border-border bg-background/40 px-7 py-3 font-bold backdrop-blur">Заказать ↗</button>
             </div>
           </div>
         </div>
@@ -277,6 +259,38 @@ function Cart({ cart, total, adjust, onЗакрыть, onDone }: { cart: Line[];
           <button onClick={send} className="w-full rounded-full bg-primary py-3 font-bold text-primary-foreground">Отправить заказ в WhatsApp</button>
         </div>
       </aside>
+    </div>
+  );
+}
+
+function HeroParallaxBg() {
+  const ref = useRef<HTMLImageElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const section = el.parentElement!.parentElement!;
+      const h = section.offsetHeight || 1;
+      const p = Math.min(Math.max(window.scrollY / h, 0), 1);
+      const k = window.innerWidth < 768 ? 0.5 : 1;
+      el.style.transform = `translate3d(${-p * 12 * k}px, ${p * 90 * k}px, 0) scale(${1 + p * 0.05 * k})`;
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); cancelAnimationFrame(raf); };
+  }, []);
+  return (
+    <div aria-hidden className="absolute inset-0 -z-10">
+      <div className="absolute inset-0 overflow-hidden">
+        <img ref={ref} src="/images/maz-burger-hero.png" alt="" fetchPriority="high"
+          className="h-full w-full object-cover object-[70%_center] will-change-transform md:object-[right_center]" />
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/75 to-background/20" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40" />
     </div>
   );
 }

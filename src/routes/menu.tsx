@@ -89,7 +89,7 @@ function Header({ cartCount }: { cartCount: number }) {
       <nav className="hidden gap-7 text-sm text-muted-foreground md:flex">
         <a href="/menu" className="text-foreground">Меню</a><a href="/about">О нас</a><a href="/delivery">Доставка</a><a href="/contact">Контакты</a>
       </nav>
-      <a href="/#top" className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-primary-foreground">Заказать · {cartCount}</a>
+      <a href="/cart" className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-primary-foreground">Корзина · {cartCount}</a>
     </div>
   </header>;
 }

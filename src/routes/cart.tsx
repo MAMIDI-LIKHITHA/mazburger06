@@ -1,0 +1,18 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { products } from "@/lib/menu";
+
+export const Route = createFileRoute("/cart")({ component: CartPage });
+type Line={key:string;id:number;qty:number;extra:number;extras:string[]};
+
+function CartPage(){
+ const [cart,setCart]=useState<Line[]>([]);
+ useEffect(()=>{try{setCart(JSON.parse(localStorage.getItem("mazCart")||"[]"))}catch{}},[]);
+ const save=(next:Line[])=>{setCart(next);localStorage.setItem("mazCart",JSON.stringify(next));};
+ const adjust=(key:string,n:number)=>save(cart.map(x=>x.key===key?{...x,qty:x.qty+n}:x).filter(x=>x.qty>0));
+ const total=useMemo(()=>cart.reduce((s,x)=>{const p=products.find(p=>p.id===x.id);return s+(p?p.price:0)*x.qty+x.extra*x.qty},0),[cart]);
+ const message=cart.map(x=>{const p=products.find(p=>p.id===x.id);return p?`${p.name} × ${x.qty} — ₽${(p.price+x.extra)*x.qty}`:""}).filter(Boolean).join("\n");
+ const wa=`Здравствуйте! Хочу сделать заказ:\n${message}\n\nИтого: ₽${total}`;
+ return <div className="min-h-screen bg-background text-foreground"><Header count={cart.reduce((s,x)=>s+x.qty,0)}/><main className="mx-auto max-w-4xl px-5 py-16"><p className="text-sm tracking-[0.3em] text-primary">ВАШ ЗАКАЗ</p><h1 className="font-display mt-2 text-6xl uppercase">Корзина</h1>{cart.length===0?<div className="mt-10 rounded-3xl border border-border bg-card p-10 text-center"><p className="text-lg text-muted-foreground">Ваша корзина пуста.</p><a href="/menu" className="mt-6 inline-flex rounded-full bg-primary px-7 py-3 font-bold text-primary-foreground">Перейти в меню</a></div>:<div className="mt-10 space-y-4">{cart.map(x=>{const p=products.find(p=>p.id===x.id);if(!p)return null;return <div key={x.key} className="flex items-center gap-4 rounded-3xl border border-border bg-card p-4"><img src={p.img} alt={p.name} className="h-24 w-24 rounded-2xl object-cover"/><div className="min-w-0 flex-1"><h2 className="font-display text-xl uppercase">{p.name}</h2><p className="font-bold text-primary">₽{p.price}</p></div><div className="flex items-center gap-3"><button onClick={()=>adjust(x.key,-1)} className="h-9 w-9 rounded-full border">−</button><span>{x.qty}</span><button onClick={()=>adjust(x.key,1)} className="h-9 w-9 rounded-full border">+</button></div></div>})}<div className="rounded-3xl border border-border bg-card p-6"><div className="flex justify-between text-xl font-bold"><span>Итого</span><span className="text-primary">₽{total}</span></div><a href={"https://wa.me/79287901679?text="+encodeURIComponent(wa)} target="_blank" rel="noreferrer" className="mt-6 flex justify-center rounded-full bg-primary px-7 py-4 font-bold text-primary-foreground">Заказать через WhatsApp ↗</a></div></div>}</main></div>
+}
+function Header({count}:{count:number}){return <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur"><div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4"><a href="/" className="font-display text-2xl">MAZ <span className="text-primary">BURGER</span></a><nav className="hidden gap-7 text-sm text-muted-foreground md:flex"><a href="/menu">Меню</a><a href="/about">О нас</a><a href="/delivery">Доставка</a><a href="/contact">Контакты</a></nav><a href="/cart" className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-primary-foreground">Корзина · {count}</a></div></header>}

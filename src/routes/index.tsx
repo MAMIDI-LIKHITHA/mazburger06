@@ -96,6 +96,7 @@ function Home() {
       <section id="top" className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-card" />
         <div className="absolute -right-24 top-16 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
+        <HeroAmbience progress={Math.min(Math.max(scrollY / 45, 0), 1)} />
         <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 py-16 md:grid-cols-[0.9fr_1.1fr] md:py-24">
           <div className="relative z-10">
             <p className="mb-4 text-sm tracking-[0.3em] text-primary">СВЕЖЕЕ • ВКУСНОЕ • С НАСТРОЕНИЕМ</p>

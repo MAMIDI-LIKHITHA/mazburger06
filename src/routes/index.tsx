@@ -77,7 +77,7 @@ function Home() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <a href="#top" className="flex items-center" aria-label="MAZ BURGER">
             <img
-              src="/images/maz-burger-logo.png"
+              src="/images/maz-burger-logo.svg"
               alt="MAZ BURGER"
               className="h-14 w-14 rounded-full object-contain"
             />
@@ -175,7 +175,7 @@ function Home() {
         <div className="mx-auto flex max-w-6xl flex-col justify-between gap-6 px-5 py-14 md:flex-row">
           <div>
             <img
-              src="/images/maz-burger-logo.png"
+              src="/images/maz-burger-logo.svg"
               alt="MAZ BURGER"
               className="h-20 w-20 rounded-full object-contain"
             />

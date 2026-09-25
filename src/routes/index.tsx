@@ -125,7 +125,7 @@ function Home() {
           {list.map((p) => (
             <article key={p.id} onClick={() => setOpen(p)} className="group cursor-pointer overflow-hidden rounded-3xl border border-border bg-card">
               <div className="relative aspect-[4/3] overflow-hidden">
-                <img src={p.img} alt={p.name} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                <img src={p.img} alt={p.name} loading="lazy" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=85"; }} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                 {p.tag && <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">{p.tag}</span>}
               </div>
               <div className="p-5">
@@ -252,7 +252,7 @@ function ProductModal({ p, onЗакрыть, onAdd }: { p: Product; onЗакры
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4" onClick={onЗакрыть}>
       <div className="grid max-h-[90vh] w-full max-w-3xl overflow-auto rounded-3xl border border-border bg-card md:grid-cols-2" onClick={(e) => e.stopPropagation()}>
-        <img src={p.img} alt={p.name} className="h-64 w-full object-cover md:h-full" />
+        <img src={p.img} alt={p.name} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=85"; }} className="h-64 w-full object-cover md:h-full" />
         <div className="p-6">
           <div className="flex justify-between"><p className="text-sm tracking-widest text-primary">{p.cat.toUpperCase()}</p><button onClick={onЗакрыть} aria-label="Закрыть" className="text-2xl">×</button></div>
           <h2 className="font-display text-4xl uppercase">{p.name}</h2>
@@ -310,7 +310,7 @@ function Cart({ cart, total, adjust, onЗакрыть, onDone }: { cart: Line[];
           {!cart.length && <p className="py-10 text-center text-muted-foreground">Ваша корзина пуста.<br />Добавьте что-нибудь действительно вкусное.</p>}
           {cart.map((x) => { const p = byId(x.id); return (
             <div key={x.key} className="flex gap-3">
-              <img src={p.img} alt="" className="h-16 w-16 rounded-xl object-cover" />
+              <img src={p.img} alt="" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=85"; }} className="h-16 w-16 rounded-xl object-cover" />
               <div className="flex-1">
                 <b>{p.name}</b>
                 {x.extras.length > 0 && <p className="text-xs text-muted-foreground">{x.extras.join(", ")}</p>}

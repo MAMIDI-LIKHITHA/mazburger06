@@ -262,3 +262,35 @@ function Cart({ cart, total, adjust, onЗакрыть, onDone }: { cart: Line[];
     </div>
   );
 }
+
+function HeroParallaxBg() {
+  const ref = useRef<HTMLImageElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const section = el.parentElement!.parentElement!;
+      const h = section.offsetHeight || 1;
+      const p = Math.min(Math.max(window.scrollY / h, 0), 1);
+      const k = window.innerWidth < 768 ? 0.5 : 1;
+      el.style.transform = `translate3d(${-p * 12 * k}px, ${p * 90 * k}px, 0) scale(${1 + p * 0.05 * k})`;
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); cancelAnimationFrame(raf); };
+  }, []);
+  return (
+    <div aria-hidden className="absolute inset-0 -z-10">
+      <div className="absolute inset-0 overflow-hidden">
+        <img ref={ref} src="/images/maz-burger-hero.png" alt="" fetchPriority="high"
+          className="h-full w-full object-cover object-[70%_center] will-change-transform md:object-[right_center]" />
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/75 to-background/20" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40" />
+    </div>
+  );
+}

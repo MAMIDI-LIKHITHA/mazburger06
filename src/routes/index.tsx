@@ -141,10 +141,10 @@ function Home() {
           <div>
             <p className="text-sm tracking-[0.3em] text-primary">О НАС</p>
             <h2 className="font-display mt-2 text-5xl uppercase">Создано для любителей бургеров.</h2>
-            <p className="mt-5 text-muted-foreground">MAZ BURGER is built around one simple idea: make burgers people actually crave. Bold flavors, quality ingredients, freshly prepared food, and an ordering experience that gets out of the way.</p>
+            <p className="mt-5 text-muted-foreground">MAZ BURGER создан с одной простой идеей: готовить бургеры, которые действительно хочется есть. Яркий вкус, качественные ингредиенты, свежеприготовленная еда и удобный заказ.</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            {[["Свежесть", "Quality ingredients prepared fresh for every order."], ["Яркий вкус", "Layered sauces, crisp textures, satisfying bites."], ["Быстро", "From menu to pickup or delivery, quickly."], ["Просто", "Choose, review and send your order in seconds."]].map(([t, d]) => (
+            {[["Свежесть", "Качественные ингредиенты, приготовленные свежими для каждого заказа."], ["Яркий вкус", "Насыщенные соусы, хрустящие текстуры и удовольствие в каждом кусочке."], ["Быстро", "От выбора в меню до самовывоза или доставки — быстро и удобно."], ["Просто", "Выберите блюда, проверьте заказ и отправьте его за считанные секунды."]].map(([t, d]) => (
               <div key={t} className="rounded-2xl border border-border p-5">
                 <h3 className="font-display text-2xl uppercase text-primary">{t}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{d}</p>
@@ -216,7 +216,7 @@ function ProductModal({ p, onЗакрыть, onAdd }: { p: Product; onЗакры
 function Cart({ cart, total, adjust, onЗакрыть, onDone }: { cart: Line[]; total: number; adjust: (k: string, n: number) => void; onЗакрыть: () => void; onDone: () => void }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [method, setMethod] = useState<"Delivery" | "Самовывоз">("Delivery");
+  const [method, setMethod] = useState<"Доставка" | "Самовывоз">("Доставка");
   const [address, setAddress] = useState("");
   const [err, setErr] = useState("");
 
@@ -224,9 +224,9 @@ function Cart({ cart, total, adjust, onЗакрыть, onDone }: { cart: Line[];
     if (!cart.length) return setErr("Ваш заказ пуст.");
     if (name.trim().length < 2) return setErr("Введите ваше имя.");
     if (!/^[0-9+ ]{7,15}$/.test(phone.trim())) return setErr("Введите корректный номер телефона.");
-    if (method === "Delivery" && address.trim().length < 5) return setErr("Введите адрес доставки.");
+    if (method === "Доставка" && address.trim().length < 5) return setErr("Введите адрес доставки.");
     const lines = cart.map((x) => { const p = byId(x.id); return `• ${p.name}${x.extras.length ? ` (${x.extras.join(", ")})` : ""} × ${x.qty} — ₽${(p.price + x.extra) * x.qty}`; }).join("\n");
-    const msg = `MAZ BURGER — НОВЫЙ ЗАКАЗ\n\nКлиент: ${name}\nТелефон: ${phone}\nСпособ получения: ${method}${method === "Delivery" ? `\nАдрес: ${address}` : ""}\n\n${lines}\n\nИтого: ₽${total}`;
+    const msg = `MAZ BURGER — НОВЫЙ ЗАКАЗ\n\nКлиент: ${name}\nТелефон: ${phone}\nСпособ получения: ${method}${method === "Доставка" ? `\nАдрес: ${address}` : ""}\n\n${lines}\n\nИтого: ₽${total}`;
     window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`, "_blank");
     onDone();
     onЗакрыть();
@@ -261,11 +261,11 @@ function Cart({ cart, total, adjust, onЗакрыть, onDone }: { cart: Line[];
               <input className={input} placeholder="Ваше имя" value={name} onChange={(e) => setName(e.target.value)} maxLength={60} />
               <input className={input} placeholder="Номер телефона" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={15} />
               <div className="grid grid-cols-2 gap-2">
-                {(["Delivery", "Самовывоз"] as const).map((m) => (
+                {(["Доставка", "Самовывоз"] as const).map((m) => (
                   <button key={m} onClick={() => setMethod(m)} className={`rounded-xl border py-2 text-sm ${method === m ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>{m}</button>
                 ))}
               </div>
-              {method === "Delivery" && <textarea className={input} placeholder="Адрес доставки" value={address} onChange={(e) => setAddress(e.target.value)} maxLength={200} />}
+              {method === "Доставка" && <textarea className={input} placeholder="Адрес доставки" value={address} onChange={(e) => setAddress(e.target.value)} maxLength={200} />}
               {err && <p className="text-sm text-destructive">{err}</p>}
             </div>
           )}

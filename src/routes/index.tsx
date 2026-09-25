@@ -76,8 +76,8 @@ function Home() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <a href="#top" className="font-display text-2xl">MAZ <span className="text-primary">BURGER</span></a>
           <nav className="hidden gap-7 text-sm text-muted-foreground md:flex">
-            {["Меню", "О нас", "Доставка", "Контакты"].map((n) => (
-              <a key={n} href={n === "Меню" ? "#menu" : n === "О нас" ? "#about" : n === "Доставка" ? "#delivery" : "#contact"} className="hover:text-foreground">{n}</a>
+            {[["Меню", "/menu"], ["О нас", "/about"], ["Доставка", "/delivery"], ["Контакты", "/contact"]].map(([n, href]) => (
+              <a key={n} href={href} className="hover:text-foreground">{n}</a>
             ))}
           </nav>
           <button onClick={() => setCartOpen(true)} className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-primary-foreground">

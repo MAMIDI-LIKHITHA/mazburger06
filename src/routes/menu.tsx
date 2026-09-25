@@ -8,11 +8,13 @@ function MenuPage() {
   const [cat, setCat] = useState("Все");
   const [open, setOpen] = useState<Product | null>(null);
   const [cartCount, setCartCount] = useState(0);
+  const [itemCounts, setItemCounts] = useState<Record<number, number>>({});
 
   useEffect(() => {
     try {
       const cart = JSON.parse(localStorage.getItem("mazCart") || "[]");
       setCartCount(cart.reduce((sum: number, item: { qty: number }) => sum + item.qty, 0));
+      setItemCounts(Object.fromEntries(cart.map((item: { id: number; qty: number }) => [item.id, item.qty])));
     } catch {}
   }, []);
 
@@ -25,7 +27,9 @@ function MenuPage() {
         ? cart.map((x: { key: string; qty: number }) => x.key === key ? { ...x, qty: x.qty + 1 } : x)
         : [...cart, { key, id, qty: 1, extra: 0, extras: [] }];
       localStorage.setItem("mazCart", JSON.stringify(next));
-      setCartCount(next.reduce((sum: number, item: { qty: number }) => sum + item.qty, 0));
+      const totalCount = next.reduce((sum: number, item: { qty: number }) => sum + item.qty, 0);
+      setCartCount(totalCount);
+      setItemCounts(Object.fromEntries(next.map((item: { id: number; qty: number }) => [item.id, item.qty])));
     } catch {}
   };
 
@@ -55,7 +59,14 @@ function MenuPage() {
                 <p className="mt-1 text-sm text-muted-foreground">{p.desc}</p>
                 <div className="mt-4 flex items-center justify-between">
                   <span className="text-xl font-bold text-primary">₽{p.price}</span>
-                  <button onClick={(e) => { e.stopPropagation(); add(p.id); }} className="rounded-full bg-secondary px-4 py-2 text-sm font-bold hover:bg-primary hover:text-primary-foreground">В корзину +</button>
+                  <div className="flex items-center gap-2">
+                    {itemCounts[p.id] > 0 && (
+                      <span className="min-w-8 rounded-full border border-primary/30 bg-primary/10 px-2 py-2 text-center text-sm font-bold text-primary" title="Количество в корзине">
+                        ×{itemCounts[p.id]}
+                      </span>
+                    )}
+                    <button onClick={(e) => { e.stopPropagation(); add(p.id); }} className="rounded-full bg-secondary px-4 py-2 text-sm font-bold hover:bg-primary hover:text-primary-foreground">В корзину +</button>
+                  </div>
                 </div>
               </div>
             </article>

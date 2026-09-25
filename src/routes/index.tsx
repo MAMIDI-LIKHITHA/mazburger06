@@ -96,6 +96,7 @@ function Home() {
       <section id="top" className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-card" />
         <div className="absolute -right-24 top-16 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
+        <HeroAmbience progress={Math.min(Math.max(scrollY / 45, 0), 1)} />
         <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 py-16 md:grid-cols-[0.9fr_1.1fr] md:py-24">
           <div className="relative z-10">
             <p className="mb-4 text-sm tracking-[0.3em] text-primary">СВЕЖЕЕ • ВКУСНОЕ • С НАСТРОЕНИЕМ</p>
@@ -290,6 +291,42 @@ function Cart({ cart, total, adjust, onЗакрыть, onDone }: { cart: Line[];
           <button onClick={send} className="w-full rounded-full bg-primary py-3 font-bold text-primary-foreground">Отправить заказ в WhatsApp</button>
         </div>
       </aside>
+    </div>
+  );
+}
+
+const AMBIENT_PARTICLES = Array.from({ length: 14 }, (_, i) => {
+  const r = (n: number) => (Math.sin(i * 97.13 + n * 13.7) + 1) / 2;
+  return {
+    left: `${5 + r(1) * 90}%`,
+    top: `${20 + r(2) * 75}%`,
+    size: 2 + r(3) * 4,
+    duration: `${14 + r(4) * 14}s`,
+    delay: `${-r(5) * 20}s`,
+    seed: i % 3 === 0,
+  };
+});
+
+function HeroAmbience({ progress }: { progress: number }) {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div className="absolute inset-0" style={{ transform: `translate3d(0, ${progress * 24}px, 0)`, transition: "transform 300ms ease-out" }}>
+        <div className="maz-glow maz-glow-a" />
+        <div className="maz-glow maz-glow-b" />
+        <div className="maz-glow maz-glow-c" />
+        <div className="maz-sweep" />
+      </div>
+      <div className="maz-spotlight" />
+      <div className="absolute inset-0" style={{ transform: `translate3d(0, ${progress * -14}px, 0)`, transition: "transform 300ms ease-out" }}>
+        {AMBIENT_PARTICLES.map((p, i) => (
+          <span
+            key={i}
+            className={p.seed ? "maz-particle maz-seed" : "maz-particle"}
+            style={{ left: p.left, top: p.top, width: p.seed ? p.size * 0.8 : p.size, height: p.seed ? p.size * 1.6 : p.size, animationDuration: p.duration, animationDelay: p.delay }}
+          />
+        ))}
+      </div>
+      <div className="absolute inset-0 bg-background" style={{ opacity: progress * 0.25, transition: "opacity 300ms ease-out" }} />
     </div>
   );
 }

@@ -150,3 +150,18 @@
   letter-spacing: 0.01em;
 }
 body { font-family: var(--font-body); }
+
+/* Homepage hero ambience */
+.maz-glow { position: absolute; border-radius: 9999px; filter: blur(80px); will-change: transform, opacity; animation: maz-breathe 18s ease-in-out infinite; }
+.maz-glow-a { width: 420px; height: 420px; left: -6%; top: 10%; background: oklch(0.7 0.17 55 / 0.16); }
+.maz-glow-b { width: 360px; height: 360px; right: 4%; bottom: 0; background: oklch(0.55 0.18 30 / 0.12); animation-duration: 24s; animation-delay: -8s; }
+.maz-glow-c { width: 520px; height: 520px; left: 40%; top: -20%; background: oklch(0.3 0.06 50 / 0.35); animation-duration: 30s; animation-delay: -4s; }
+.maz-sweep { position: absolute; width: 60%; height: 70%; top: 15%; left: -30%; border-radius: 9999px; filter: blur(110px); background: oklch(0.78 0.16 70 / 0.08); animation: maz-sweep 40s ease-in-out infinite alternate; will-change: transform; }
+.maz-spotlight { position: absolute; right: 0; top: 50%; width: 60%; height: 90%; transform: translateY(-50%); background: radial-gradient(closest-side, oklch(0.8 0.15 70 / 0.14), transparent 75%); }
+@media (max-width: 767px) { .maz-spotlight { width: 100%; top: 70%; } }
+.maz-particle { position: absolute; border-radius: 9999px; background: oklch(0.85 0.12 75 / 0.5); box-shadow: 0 0 6px oklch(0.8 0.15 70 / 0.4); animation: maz-float 20s linear infinite; will-change: transform, opacity; }
+.maz-seed { background: oklch(0.9 0.05 85 / 0.45); box-shadow: none; }
+@keyframes maz-breathe { 0%,100% { transform: translate3d(0,0,0) scale(1); opacity: .8; } 50% { transform: translate3d(40px,-30px,0) scale(1.15); opacity: 1; } }
+@keyframes maz-sweep { from { transform: translate3d(0,0,0); } to { transform: translate3d(170%,-10%,0); } }
+@keyframes maz-float { 0% { transform: translate3d(0,0,0) rotate(0); opacity: 0; } 15% { opacity: 1; } 85% { opacity: .8; } 100% { transform: translate3d(30px,-160px,0) rotate(120deg); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .maz-glow, .maz-sweep, .maz-particle { animation: none; } .maz-particle { opacity: .4; } }

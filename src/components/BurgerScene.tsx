@@ -165,7 +165,6 @@ export default function BurgerScene({ scrollY }: { scrollY: number }) {
       x: Math.max(-0.7, Math.min(0.9, rotRef.current.x + dy * 0.004)),
       y: rotRef.current.y + dx * 0.008,
     };
-    window.dispatchEvent(new CustomEvent("maz-burger-rot", { detail: rotRef.current }));
   };
   const onPointerUp = () => {
     if (dragInfo.current.moved < 6) setAssembled((a) => !a);

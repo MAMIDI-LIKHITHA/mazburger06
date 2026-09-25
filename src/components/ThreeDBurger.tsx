@@ -61,16 +61,28 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
           const assembledX = (part.x / 1024) * 100;
           const assembledY = (part.y / 1536) * 100;
           const assembledW = (part.w / 1024) * 100;
-          const layerStart = index * 0.018;
-          const layerProgress = Math.min(
-            Math.max((progress - layerStart) / (1 - layerStart), 0),
+          // Two-stage assembly:
+          // 1) Vertical stacking first while the ingredients remain spread horizontally.
+          // 2) Horizontal attachment second, pulling every layer into its final position.
+          const verticalProgress = Math.min(progress / 0.5, 1);
+          const horizontalProgress = Math.min(
+            Math.max((progress - 0.5) / 0.5, 0),
             1
           );
           const direction = index % 2 === 0 ? 1 : -1;
-          const spread = (1 - layerProgress) * part.spread * direction;
-          const vertical = (1 - layerProgress) * (-18 - index * 3);
-          const rotation = part.rotate + (1 - layerProgress) * direction * 7;
-          const depth = part.z + (1 - layerProgress) * 100;
+
+          const spread =
+            (1 - horizontalProgress) * part.spread * direction;
+
+          const vertical =
+            (1 - verticalProgress) * (-110 - index * 8);
+
+          const rotation =
+            part.rotate +
+            (1 - horizontalProgress) * direction * 7;
+
+          const depth =
+            part.z + (1 - verticalProgress) * 100;
 
           return (
             <img

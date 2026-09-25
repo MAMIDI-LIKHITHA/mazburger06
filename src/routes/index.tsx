@@ -102,6 +102,8 @@ function Home() {
               <div className="absolute -bottom-5 left-10 right-2 h-7 rounded-[50%] bg-black/70 blur-xl [transform:translateZ(-45px)_rotateX(70deg)]" />
             </div>
           </div>
+        </div>
+      </section>
 
       <section id="menu" className="mx-auto max-w-6xl px-5 py-20">
         <p className="text-sm tracking-[0.3em] text-primary">НАШЕ МЕНЮ</p>

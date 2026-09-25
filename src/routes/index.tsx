@@ -75,7 +75,13 @@ function Home() {
 
       <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-          <a href="#top" className="font-display text-2xl">MAZ <span className="text-primary">BURGER</span></a>
+          <a href="#top" className="flex items-center" aria-label="MAZ BURGER">
+            <img
+              src="/images/maz-burger-logo.png"
+              alt="MAZ BURGER"
+              className="h-14 w-14 rounded-full object-contain"
+            />
+          </a>
           <nav className="hidden gap-7 text-sm text-muted-foreground md:flex">
             {[[ "Меню", "/menu" ], [ "О нас", "/about" ], [ "Доставка", "/delivery" ], [ "Контакты", "/contact" ]].map(([n, href]) => (
               <a key={n} href={href} className="hover:text-foreground">{n}</a>
@@ -168,7 +174,11 @@ function Home() {
       <footer id="contact" className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col justify-between gap-6 px-5 py-14 md:flex-row">
           <div>
-            <p className="font-display text-3xl">MAZ <span className="text-primary">BURGER</span></p>
+            <img
+              src="/images/maz-burger-logo.png"
+              alt="MAZ BURGER"
+              className="h-20 w-20 rounded-full object-contain"
+            />
             <p className="mt-2 text-muted-foreground">Яркий вкус. Настоящие бургеры.</p>
           </div>
           <div className="text-sm text-muted-foreground">

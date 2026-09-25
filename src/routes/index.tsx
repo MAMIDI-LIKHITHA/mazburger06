@@ -307,6 +307,19 @@ const AMBIENT_PARTICLES = Array.from({ length: 14 }, (_, i) => {
   };
 });
 
+// Rising embers: warm sparks that drift upward from the lower half of the hero.
+const AMBIENT_EMBERS = Array.from({ length: 22 }, (_, i) => {
+  const r = (n: number) => (Math.sin(i * 53.7 + n * 29.1) + 1) / 2;
+  return {
+    left: `${4 + r(1) * 92}%`,
+    size: 1.5 + r(2) * 3,
+    duration: `${7 + r(3) * 9}s`,
+    delay: `${-r(4) * 14}s`,
+    drift: `${(r(5) - 0.5) * 60}px`,
+    hue: r(6) > 0.6 ? "warm" : "amber",
+  };
+});
+
 function HeroAmbience({ progress }: { progress: number }) {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -316,7 +329,19 @@ function HeroAmbience({ progress }: { progress: number }) {
         <div className="maz-glow maz-glow-c" />
         <div className="maz-sweep" />
       </div>
+      {/* Slow drifting warm haze for depth */}
+      <div className="maz-haze" />
       <div className="maz-spotlight" />
+      {/* Rising ember stream */}
+      <div className="absolute inset-0" style={{ transform: `translate3d(0, ${progress * -18}px, 0)`, transition: "transform 300ms ease-out" }}>
+        {AMBIENT_EMBERS.map((e, i) => (
+          <span
+            key={`e${i}`}
+            className={`maz-ember ${e.hue === "warm" ? "maz-ember-warm" : "maz-ember-amber"}`}
+            style={{ left: e.left, bottom: `${-8 + (i % 4) * 4}%`, width: e.size, height: e.size, ["--maz-drift" as string]: e.drift, animationDuration: e.duration, animationDelay: e.delay }}
+          />
+        ))}
+      </div>
       <div className="absolute inset-0" style={{ transform: `translate3d(0, ${progress * -14}px, 0)`, transition: "transform 300ms ease-out" }}>
         {AMBIENT_PARTICLES.map((p, i) => (
           <span

@@ -1,12 +1,34 @@
 import { useEffect, useState } from "react";
 
+type BurgerPart = {
+  src: string;
+  alt: string;
+  x: number;
+  y: number;
+  w: number;
+  z: number;
+  spread: number;
+  rotate: number;
+};
+
+const parts: BurgerPart[] = [
+  { src: "/images/burger-3d/maz-burger-bottom-bun.png", alt: "Нижняя булочка", x: 185, y: 1290, w: 650, z: 5, spread: 190, rotate: -2 },
+  { src: "/images/burger-3d/maz-burger-patty.png", alt: "Говяжья котлета", x: 200, y: 1070, w: 625, z: 25, spread: 155, rotate: 1.5 },
+  { src: "/images/burger-3d/maz-burger-cheese.png", alt: "Сыр", x: 190, y: 900, w: 645, z: 45, spread: 125, rotate: -1 },
+  { src: "/images/burger-3d/maz-burger-onion.png", alt: "Красный лук", x: 220, y: 785, w: 580, z: 65, spread: 105, rotate: 2 },
+  { src: "/images/burger-3d/maz-burger-tomato.png", alt: "Помидоры", x: 190, y: 640, w: 635, z: 85, spread: 90, rotate: -1.5 },
+  { src: "/images/burger-3d/maz-burger-lettuce.png", alt: "Салат", x: 110, y: 435, w: 805, z: 105, spread: 72, rotate: 1 },
+  { src: "/images/burger-3d/maz-burger-sauce.png", alt: "Соус", x: 210, y: 325, w: 605, z: 125, spread: 52, rotate: -1 },
+  { src: "/images/burger-3d/maz-burger-top-bun.png", alt: "Верхняя булочка", x: 180, y: 25, w: 670, z: 150, spread: 30, rotate: 1.5 },
+];
+
 export function ThreeDBurger({ scrollY }: { scrollY: number }) {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const onMove = (event: PointerEvent) => {
-      const x = (event.clientX / window.innerWidth - 0.5) * 8;
-      const y = (event.clientY / window.innerHeight - 0.5) * -6;
+      const x = (event.clientX / window.innerWidth - 0.5) * 7;
+      const y = (event.clientY / window.innerHeight - 0.5) * -5;
       setTilt({ x: y, y: x });
     };
 
@@ -14,42 +36,58 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
     return () => window.removeEventListener("pointermove", onMove);
   }, []);
 
-  const progress = Math.min(Math.max(scrollY / 700, 0), 1);
-  const scale = 1 + progress * 0.08;
-  const lift = progress * -18;
+  const progress = Math.min(Math.max(scrollY / 650, 0), 1);
 
   return (
     <div
-      className="relative z-10 flex h-[390px] w-full max-w-[600px] items-center justify-center sm:h-[470px] md:h-[560px]"
-      style={{ perspective: "1200px" }}
+      className="relative z-10 flex w-full max-w-[600px] items-center justify-center"
+      style={{ perspective: "1400px" }}
     >
       <div
-        className="relative w-full max-w-[560px] transition-transform duration-300 ease-out"
+        className="relative w-[min(78vw,460px)]"
         style={{
+          aspectRatio: "1024 / 1536",
           transformStyle: "preserve-3d",
-          transform: `translateY(${lift}px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${scale})`,
+          transform: `translateY(${-progress * 18}px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+          transition: "transform 180ms ease-out",
         }}
       >
         <div
-          className="absolute left-1/2 top-1/2 h-[78%] w-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-3xl"
+          className="absolute left-1/2 top-1/2 h-[75%] w-[75%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-3xl"
           aria-hidden="true"
         />
 
-        <img
-          src="/images/maz-burger-hero.png"
-          alt="MAZ BURGER"
-          className="relative z-10 mx-auto block w-full max-w-[560px] object-contain drop-shadow-[0_35px_35px_rgba(0,0,0,0.38)]"
-          style={{
-            transform: "translateZ(35px)",
-            transformStyle: "preserve-3d",
-          }}
-          onError={(event) => {
-            event.currentTarget.style.display = "none";
-          }}
-        />
+        {parts.map((part, index) => {
+          const assembledX = (part.x / 1024) * 100;
+          const assembledY = (part.y / 1536) * 100;
+          const assembledW = (part.w / 1024) * 100;
+          const direction = index % 2 === 0 ? 1 : -1;
+          const spread = (1 - progress) * part.spread * direction;
+          const rotation = part.rotate + (1 - progress) * direction * 5;
+          const depth = part.z + (1 - progress) * 70;
+
+          return (
+            <img
+              key={part.src}
+              src={part.src}
+              alt={part.alt}
+              className="pointer-events-none absolute block object-contain"
+              style={{
+                left: `${assembledX}%`,
+                top: `${assembledY}%`,
+                width: `${assembledW}%`,
+                transform: `translate3d(${spread}px, ${-spread * 0.18}px, ${depth}px) rotateZ(${rotation}deg)`,
+                transformOrigin: "center center",
+                zIndex: index + 2,
+                filter: "drop-shadow(0 18px 16px rgba(0,0,0,0.28))",
+                transition: "transform 90ms linear",
+              }}
+            />
+          );
+        })}
 
         <div
-          className="pointer-events-none absolute bottom-[8%] left-1/2 z-0 h-10 w-[62%] -translate-x-1/2 rounded-[50%] bg-black/35 blur-2xl"
+          className="pointer-events-none absolute bottom-[2%] left-1/2 h-[5%] w-[55%] -translate-x-1/2 rounded-[50%] bg-black/35 blur-2xl"
           aria-hidden="true"
         />
       </div>

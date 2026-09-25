@@ -23,11 +23,11 @@ const EXTRAS = [
   { label: "Extra cheese", price: 49 },
   { label: "Extra sauce", price: 29 },
 ];
-const WHATSAPP = "0000000000"; // placeholder until the restaurant provides the real number
+const WHATSAPP = "0000000000";
 const byId = (id: number) => products.find((p) => p.id === id)!;
 
 function Home() {
-  const [cat, setCat] = useState("All");
+  const [cat, setCat] = useState("Все");
   const [open, setOpen] = useState<Product | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [cart, setCart] = useState<Line[]>([]);
@@ -37,7 +37,7 @@ function Home() {
   }, []);
   useEffect(() => { localStorage.setItem("mazCart", JSON.stringify(cart)); }, [cart]);
 
-  const list = cat === "All" ? products : products.filter((p) => p.cat === cat);
+  const list = cat === "Все" ? products : products.filter((p) => p.cat === cat);
   const count = cart.reduce((a, x) => a + x.qty, 0);
   const total = cart.reduce((a, x) => a + (byId(x.id).price + x.extra) * x.qty, 0);
 
@@ -63,7 +63,7 @@ function Home() {
           <a href="#top" className="font-display text-2xl">MAZ <span className="text-primary">BURGER</span></a>
           <nav className="hidden gap-7 text-sm text-muted-foreground md:flex">
             {["Menu", "About", "Delivery", "Contact"].map((n) => (
-              <a key={n} href={`#${n.toLowerCase()}`} className="hover:text-foreground">{n}</a>
+              <a key={n} href={n === "Меню" ? "#menu" : n === "О нас" ? "#about" : n === "Доставка" ? "#delivery" : "#contact"} className="hover:text-foreground">{n}</a>
             ))}
           </nav>
           <button onClick={() => setCartOpen(true)} className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-primary-foreground">

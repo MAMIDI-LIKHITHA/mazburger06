@@ -187,45 +187,36 @@ function Home() {
 }
 
 function LayeredBurger({ scrollY }: { scrollY: number }) {
-  const progress = Math.min(Math.max(scrollY / 420, 0), 1);
+  const tilt = Math.min(Math.max(scrollY / 700, 0), 1);
   const layers = [
-    { clip: "inset(0 0 86% 0)", y: -28, x: 10, z: 140, rx: -5, ry: 4 },
-    { clip: "inset(14% 0 70% 0)", y: -16, x: -8, z: 105, rx: 3, ry: -3 },
-    { clip: "inset(30% 0 56% 0)", y: 4, x: 13, z: 75, rx: -2, ry: 4 },
-    { clip: "inset(44% 0 42% 0)", y: 18, x: -11, z: 48, rx: 3, ry: -4 },
-    { clip: "inset(58% 0 27% 0)", y: 28, x: 9, z: 28, rx: -3, ry: 3 },
-    { clip: "inset(73% 0 14% 0)", y: 18, x: -7, z: 12, rx: 2, ry: -2 },
-    { clip: "inset(86% 0 0 0)", y: 8, x: 4, z: 0, rx: 0, ry: 0 },
+    { clip: "inset(0 0 86% 0)", fromY: -125, fromX: 18, rotate: -7, delay: 0 },
+    { clip: "inset(14% 0 70% 0)", fromY: -90, fromX: -14, rotate: 5, delay: 120 },
+    { clip: "inset(30% 0 56% 0)", fromY: -58, fromX: 16, rotate: -4, delay: 240 },
+    { clip: "inset(44% 0 42% 0)", fromY: 54, fromX: -16, rotate: 4, delay: 360 },
+    { clip: "inset(58% 0 27% 0)", fromY: 78, fromX: 12, rotate: -3, delay: 480 },
+    { clip: "inset(73% 0 14% 0)", fromY: 105, fromX: -10, rotate: 3, delay: 600 },
+    { clip: "inset(86% 0 0 0)", fromY: 135, fromX: 7, rotate: 0, delay: 720 },
   ];
-
-  const transform = (l: typeof layers[number]) => ({
-    transform: `translate3d(${l.x * progress}px, ${l.y * progress}px, ${l.z * progress}px) rotateX(${l.rx * progress}deg) rotateY(${l.ry * progress}deg)`,
-    clipPath: l.clip,
-  });
 
   return (
     <div
-      className="relative z-10 h-[350px] w-[330px] overflow-visible [perspective:1600px] [transform-style:preserve-3d] sm:h-[420px] sm:w-[390px] md:h-[500px] md:w-[500px]"
-      style={{ transform: `rotateX(${5 + progress * 2}deg) rotateY(${-8 - progress * 4}deg)` }}
+      className="relative z-10 h-[350px] w-[330px] overflow-visible [perspective:1400px] [transform-style:preserve-3d] sm:h-[420px] sm:w-[390px] md:h-[500px] md:w-[500px]"
+      style={{
+        transform: `rotateX(${5 + tilt * 3}deg) rotateY(${-7 - tilt * 5}deg)`,
+      }}
     >
-      <div className="absolute -inset-8 rounded-full bg-primary/10 blur-3xl" />
-      <div
-        className="absolute inset-0 overflow-hidden rounded-[2.5rem] border border-white/10 shadow-[25px_35px_55px_rgba(0,0,0,.55)]"
-        style={{ opacity: Math.max(0.08, 1 - progress * 0.72) }}
-      >
-        <img
-          src="/images/maz-burger-hero.png"
-          alt=""
-          aria-hidden="true"
-          className="h-full w-full object-cover"
-        />
-      </div>
+      <div className="absolute -inset-10 rounded-full bg-primary/15 blur-3xl" />
 
-      {layers.map((l, i) => (
+      {layers.map((layer, i) => (
         <div
           key={i}
-          className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2.5rem] transition-transform duration-100 ease-out"
-          style={transform(l)}
+          className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2.5rem]"
+          style={{
+            clipPath: layer.clip,
+            transform: `translate3d(${layer.fromX}px, ${layer.fromY}px, ${80 + i * 10}px) rotateZ(${layer.rotate}deg)`,
+            animation: "mazBurgerAssemble 1.35s cubic-bezier(.22,.8,.25,1) forwards",
+            animationDelay: `${layer.delay}ms`,
+          }}
         >
           <img
             src="/images/maz-burger-hero.png"
@@ -233,14 +224,30 @@ function LayeredBurger({ scrollY }: { scrollY: number }) {
             aria-hidden="true"
             className="h-full w-full object-cover"
           />
-          <div className="absolute inset-x-0 bottom-0 h-8 bg-black/20 blur-md" />
+          <div className="absolute inset-x-0 bottom-0 h-5 bg-black/25 blur-md" />
         </div>
       ))}
 
       <div
-        className="pointer-events-none absolute -bottom-5 left-[10%] h-8 w-[80%] rounded-[50%] bg-black/65 blur-xl transition-transform duration-100 ease-out"
-        style={{ transform: `translate3d(0, ${progress * 18}px, -60px) scaleX(${1 + progress * 0.08})` }}
+        className="pointer-events-none absolute -bottom-5 left-[10%] h-8 w-[80%] rounded-[50%] bg-black/70 blur-xl"
+        style={{ transform: "translateZ(-80px)" }}
       />
+
+      <style>{`
+        @keyframes mazBurgerAssemble {
+          0% {
+            opacity: 0;
+            transform: translate3d(var(--from-x, 0px), var(--from-y, 0px), 180px) rotateZ(6deg) scale(1.03);
+          }
+          35% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) rotateZ(0deg) scale(1);
+          }
+        }
+      `}</style>
     </div>
   );
 }

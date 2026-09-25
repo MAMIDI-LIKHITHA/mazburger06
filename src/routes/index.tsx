@@ -85,17 +85,23 @@ function Home() {
               <button onClick={() => setCartOpen(true)} className="rounded-full border border-border px-7 py-3 font-bold">Order Now ↗</button>
             </div>
           </div>
-          <div className="relative flex min-h-[360px] items-center justify-center [perspective:1200px] md:min-h-[520px]">
-            <div className="absolute bottom-8 h-10 w-3/4 rounded-full bg-black/40 blur-2xl" />
-            <img
-              src="/images/maz-burger-hero.webp"
-              alt="Stacked MAZ burger with fresh toppings"
-              fetchPriority="high"
-              className="relative z-10 w-full max-w-md object-contain drop-shadow-[0_30px_35px_rgba(0,0,0,0.55)] [transform:perspective(1200px)_rotateX(4deg)_rotateY(-8deg)_translateZ(20px)] transition-transform duration-500 ease-out hover:-translate-y-3 hover:[transform:perspective(1200px)_rotateX(2deg)_rotateY(-3deg)_translateZ(45px)_scale(1.04)] will-change-transform motion-safe:animate-[mazFloat_5s_ease-in-out_infinite]"
-            />
+          <div className="relative flex min-h-[420px] items-center justify-center [perspective:1400px] md:min-h-[560px]">
+            <div className="absolute bottom-10 h-14 w-[78%] rounded-[50%] bg-black/60 blur-2xl" />
+            <div className="absolute h-72 w-72 rounded-full border border-primary/20 bg-primary/10 blur-[1px] shadow-[0_0_100px_rgba(255,120,0,0.18)] md:h-96 md:w-96" />
+            <div className="relative z-10 w-[92%] max-w-[560px] [transform-style:preserve-3d] [transform:rotateX(10deg)_rotateY(-18deg)_rotateZ(-2deg)_translateZ(55px)] transition-all duration-700 ease-out hover:-translate-y-4 hover:[transform:rotateX(5deg)_rotateY(-8deg)_rotateZ(-1deg)_translateZ(100px)_scale(1.06)]">
+              <div className="absolute -inset-5 rounded-[3rem] bg-primary/10 blur-2xl" />
+              <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 shadow-[35px_45px_60px_rgba(0,0,0,0.65),-10px_-10px_35px_rgba(255,255,255,0.05)]">
+                <img
+                  src="/images/maz-burger-hero.webp"
+                  alt="Stacked MAZ burger with fresh toppings"
+                  fetchPriority="high"
+                  className="block w-full object-cover"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-black/25" />
+              </div>
+              <div className="absolute -bottom-5 left-10 right-2 h-7 rounded-[50%] bg-black/70 blur-xl [transform:translateZ(-45px)_rotateX(70deg)]" />
+            </div>
           </div>
-        </div>
-      </section>
 
       <section id="menu" className="mx-auto max-w-6xl px-5 py-20">
         <p className="text-sm tracking-[0.3em] text-primary">THE LINEUP</p>

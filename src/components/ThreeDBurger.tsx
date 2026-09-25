@@ -64,9 +64,9 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
           // Two-stage assembly:
           // 1) Vertical stacking first while the ingredients remain spread horizontally.
           // 2) Horizontal attachment second, pulling every layer into its final position.
-          const verticalProgress = Math.min(progress / 0.58, 1);
+          const verticalProgress = Math.min(progress / 0.5, 1);
           const horizontalProgress = Math.min(
-            Math.max((progress - 0.58) / 0.42, 0),
+            Math.max((progress - 0.5) / 0.3, 0),
             1
           );
           const direction = index % 2 === 0 ? 1 : -1;
@@ -98,7 +98,7 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
                 transform: `translate3d(${spread}px, ${vertical}px, ${depth}px) rotateZ(${rotation}deg)`,
                 transformOrigin: "center center",
                 zIndex: index + 2,
-                opacity: Math.max(0, 1 - Math.max(0, Math.min((progress - 0.78) / 0.22, 1))),
+                opacity: Math.max(0, 1 - Math.max(0, Math.min((progress - 0.72) / 0.18, 1))),
                 filter: "drop-shadow(0 18px 16px rgba(0,0,0,0.28))",
                 transition: "transform 35ms cubic-bezier(0.22, 1, 0.36, 1), opacity 100ms ease-out",
               }}
@@ -111,7 +111,7 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
           alt="MAZ BURGER"
           className="pointer-events-none absolute inset-0 h-full w-full object-cover"
           style={{
-            opacity: Math.max(0, Math.min((progress - 0.82) / 0.18, 1)),
+            opacity: Math.max(0, Math.min((progress - 0.72) / 0.28, 1)),
             transform: `translateZ(220px) scale(${0.92 + Math.max(0, Math.min((progress - 0.82) / 0.18, 1)) * 0.08})`,
             transition: "opacity 80ms ease-out, transform 80ms ease-out",
             zIndex: 40,

@@ -36,7 +36,7 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
     return () => window.removeEventListener("pointermove", onMove);
   }, []);
 
-  const progress = Math.min(Math.max(scrollY / 220, 0), 1);
+  const progress = Math.min(Math.max(scrollY / 100, 0), 1);
 
   return (
     <div
@@ -48,7 +48,7 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
         style={{
           aspectRatio: "1024 / 1536",
           transformStyle: "preserve-3d",
-          transform: `translateY(${-progress * 22}px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+          transform: `translateY(${-progress * 5}px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
           transition: "transform 120ms ease-out",
         }}
       >
@@ -61,7 +61,7 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
           const assembledX = (part.x / 1024) * 100;
           const assembledY = (part.y / 1536) * 100;
           const assembledW = (part.w / 1024) * 100;
-          const layerStart = index * 0.07;
+          const layerStart = index * 0.035;
           const layerProgress = Math.min(
             Math.max((progress - layerStart) / (1 - layerStart), 0),
             1
@@ -86,7 +86,7 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
                 transformOrigin: "center center",
                 zIndex: index + 2,
                 filter: "drop-shadow(0 18px 16px rgba(0,0,0,0.28))",
-                transition: "transform 70ms cubic-bezier(0.22, 1, 0.36, 1)",
+                transition: "transform 50ms cubic-bezier(0.22, 1, 0.36, 1)",
               }}
             />
           );

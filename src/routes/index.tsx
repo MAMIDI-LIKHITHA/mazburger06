@@ -214,6 +214,9 @@ function LayeredBurger({ scrollY }: { scrollY: number }) {
           style={{
             clipPath: layer.clip,
             transform: `translate3d(${layer.fromX}px, ${layer.fromY}px, ${80 + i * 10}px) rotateZ(${layer.rotate}deg)`,
+            "--from-x": `${layer.fromX}px`,
+            "--from-y": `${layer.fromY}px`,
+            "--from-rotate": `${layer.rotate}deg`,
             animation: "mazBurgerAssemble 1.35s cubic-bezier(.22,.8,.25,1) forwards",
             animationDelay: `${layer.delay}ms`,
           }}
@@ -237,7 +240,7 @@ function LayeredBurger({ scrollY }: { scrollY: number }) {
         @keyframes mazBurgerAssemble {
           0% {
             opacity: 0;
-            transform: translate3d(var(--from-x, 0px), var(--from-y, 0px), 180px) rotateZ(6deg) scale(1.03);
+            transform: translate3d(var(--from-x, 0px), var(--from-y, 0px), 180px) rotateZ(var(--from-rotate, 0deg)) scale(1.03);
           }
           35% {
             opacity: 1;

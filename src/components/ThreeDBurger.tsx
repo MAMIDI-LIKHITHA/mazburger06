@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type BurgerPart = {
   src: string;
@@ -24,81 +24,144 @@ const parts: BurgerPart[] = [
 ];
 
 export function ThreeDBurger({ scrollY }: { scrollY: number }) {
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  // Rotation controlled by drag/touch; idle gently sways.
+  const [rot, setRot] = useState({ x: -8, y: -18 });
+  const [dragging, setDragging] = useState(false);
+  const [assembled, setAssembled] = useState(false);
+  const [tapProgress, setTapProgress] = useState(0);
+  const drag = useRef({ x: 0, y: 0, rx: 0, ry: 0, moved: 0 });
+  const raf = useRef<number | null>(null);
 
+  // Animate tap-driven assembly progress toward target.
   useEffect(() => {
-    const onMove = (event: PointerEvent) => {
-      const x = (event.clientX / window.innerWidth - 0.5) * 7;
-      const y = (event.clientY / window.innerHeight - 0.5) * -5;
-      setTilt({ x: y, y: x });
+    const target = assembled ? 1 : 0;
+    let last = performance.now();
+    const step = (now: number) => {
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      let done = false;
+      setTapProgress((p) => {
+        const next = p + (target - p) * (1 - Math.exp(-5 * dt));
+        if (Math.abs(target - next) < 0.002) {
+          done = true;
+          return target;
+        }
+        return next;
+      });
+      if (!done) raf.current = requestAnimationFrame(step);
     };
+    raf.current = requestAnimationFrame(step);
+    return () => {
+      if (raf.current) cancelAnimationFrame(raf.current);
+    };
+  }, [assembled]);
 
-    window.addEventListener("pointermove", onMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onMove);
-  }, []);
+  // Idle sway when not dragging.
+  useEffect(() => {
+    if (dragging) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+    let id = 0;
+    const t0 = performance.now();
+    const base = { ...rot };
+    const loop = (now: number) => {
+      const t = (now - t0) / 1000;
+      setRot({ x: base.x + Math.sin(t * 0.8) * 2, y: base.y + Math.sin(t * 0.5) * 6 });
+      id = requestAnimationFrame(loop);
+    };
+    id = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dragging]);
 
-  const progress = Math.min(Math.max(scrollY / 45, 0), 1);
+  const onDown = (e: React.PointerEvent) => {
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    drag.current = { x: e.clientX, y: e.clientY, rx: rot.x, ry: rot.y, moved: 0 };
+    setDragging(true);
+  };
+  const onMove = (e: React.PointerEvent) => {
+    if (!dragging) return;
+    const dx = e.clientX - drag.current.x;
+    const dy = e.clientY - drag.current.y;
+    drag.current.moved = Math.max(drag.current.moved, Math.hypot(dx, dy));
+    setRot({
+      x: Math.max(-35, Math.min(35, drag.current.rx - dy * 0.35)),
+      y: drag.current.ry + dx * 0.5,
+    });
+  };
+  const onUp = () => {
+    if (drag.current.moved < 6) setAssembled((a) => !a);
+    setDragging(false);
+  };
+
+  const scrollProgress = Math.min(Math.max(scrollY / 45, 0), 1);
+  const progress = Math.max(scrollProgress, tapProgress);
 
   return (
     <div
-      className="relative z-10 flex w-full max-w-[600px] items-center justify-center"
-      style={{ perspective: "1600px" }}
+      className="relative z-10 flex w-full max-w-[600px] select-none flex-col items-center justify-center"
+      style={{ perspective: "1400px" }}
     >
       <div
-        className="relative w-[min(78vw,460px)]"
+        role="button"
+        tabIndex={0}
+        aria-label="Поверните бургер, нажмите чтобы собрать"
+        onPointerDown={onDown}
+        onPointerMove={onMove}
+        onPointerUp={onUp}
+        onPointerCancel={() => setDragging(false)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setAssembled((a) => !a);
+          }
+        }}
+        className={`relative w-[min(78vw,460px)] touch-none outline-none ${dragging ? "cursor-grabbing" : "cursor-grab"}`}
         style={{
           aspectRatio: "1024 / 1536",
           transformStyle: "preserve-3d",
-          transform: `translateY(${-progress * 2}px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-          transition: "transform 120ms ease-out",
+          transform: `rotateX(${rot.x}deg) rotateY(${rot.y}deg)`,
+          transition: dragging ? "none" : "transform 80ms linear",
         }}
       >
         <div
-          className="absolute left-1/2 top-1/2 h-[75%] w-[75%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-3xl"
+          className="pointer-events-none absolute left-1/2 top-1/2 h-[75%] w-[75%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-3xl"
+          style={{ transform: "translate(-50%,-50%) translateZ(-120px)" }}
           aria-hidden="true"
         />
 
         {parts.map((part, index) => {
-          // Two-stage assembly: vertical stacking first, then horizontal attachment.
           const verticalProgress = Math.min(progress / 0.5, 1);
           const assembledX = (part.x / 1024) * 100;
           const startY = (part.y / 1536) * 100;
           const finalY = (part.finalY / 1536) * 100;
           const assembledY = startY + (finalY - startY) * verticalProgress;
           const assembledW = (part.w / 1024) * 100;
-          const horizontalProgress = Math.min(
-            Math.max((progress - 0.5) / 0.3, 0),
-            1
-          );
+          const horizontalProgress = Math.min(Math.max((progress - 0.5) / 0.3, 0), 1);
           const direction = index % 2 === 0 ? 1 : -1;
-
           const horizontalEase = 1 - Math.pow(horizontalProgress, 1.8);
-          const spread =
-            horizontalEase * part.spread * direction;
-
-          const rotation =
-            part.rotate +
-            horizontalEase * direction * 7;
-
-          const depth =
-            part.z + (1 - verticalProgress) * 100;
+          const spread = horizontalEase * part.spread * direction;
+          const rotation = part.rotate + horizontalEase * direction * 7;
+          // Real 3D separation: exploded layers fan out in depth, then compress.
+          const explode = 1 - progress;
+          const depth = (index - 3.5) * (8 + explode * 45);
+          const tiltX = explode * direction * 18;
 
           return (
             <img
               key={part.src}
               src={part.src}
               alt={part.alt}
+              draggable={false}
               className="pointer-events-none absolute block object-contain"
               style={{
                 left: `${assembledX}%`,
                 top: `${assembledY}%`,
                 width: `${assembledW}%`,
-                transform: `translate3d(${spread}px, 0, ${depth}px) rotateZ(${rotation}deg)`,
+                transform: `translate3d(${spread}px, 0, ${depth}px) rotateX(${tiltX}deg) rotateZ(${rotation}deg)`,
                 transformOrigin: "center center",
                 zIndex: index + 2,
-                opacity: 1,
                 filter: "drop-shadow(0 18px 16px rgba(0,0,0,0.28))",
-                transition: "transform 35ms cubic-bezier(0.22, 1, 0.36, 1), opacity 100ms ease-out",
               }}
             />
           );
@@ -109,6 +172,9 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
           aria-hidden="true"
         />
       </div>
+      <p className="mt-2 text-xs uppercase tracking-widest text-muted-foreground">
+        Вращайте · нажмите, чтобы {assembled ? "разобрать" : "собрать"}
+      </p>
     </div>
   );
 }

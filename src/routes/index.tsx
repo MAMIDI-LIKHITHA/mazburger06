@@ -294,3 +294,39 @@ function Cart({ cart, total, adjust, onЗакрыть, onDone }: { cart: Line[];
     </div>
   );
 }
+
+const AMBIENT_PARTICLES = Array.from({ length: 14 }, (_, i) => {
+  const r = (n: number) => (Math.sin(i * 97.13 + n * 13.7) + 1) / 2;
+  return {
+    left: `${5 + r(1) * 90}%`,
+    top: `${20 + r(2) * 75}%`,
+    size: 2 + r(3) * 4,
+    duration: `${14 + r(4) * 14}s`,
+    delay: `${-r(5) * 20}s`,
+    seed: i % 3 === 0,
+  };
+});
+
+function HeroAmbience({ progress }: { progress: number }) {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div className="absolute inset-0" style={{ transform: `translate3d(0, ${progress * 24}px, 0)`, transition: "transform 300ms ease-out" }}>
+        <div className="maz-glow maz-glow-a" />
+        <div className="maz-glow maz-glow-b" />
+        <div className="maz-glow maz-glow-c" />
+        <div className="maz-sweep" />
+      </div>
+      <div className="maz-spotlight" />
+      <div className="absolute inset-0" style={{ transform: `translate3d(0, ${progress * -14}px, 0)`, transition: "transform 300ms ease-out" }}>
+        {AMBIENT_PARTICLES.map((p, i) => (
+          <span
+            key={i}
+            className={p.seed ? "maz-particle maz-seed" : "maz-particle"}
+            style={{ left: p.left, top: p.top, width: p.seed ? p.size * 0.8 : p.size, height: p.seed ? p.size * 1.6 : p.size, animationDuration: p.duration, animationDelay: p.delay }}
+          />
+        ))}
+      </div>
+      <div className="absolute inset-0 bg-background" style={{ opacity: progress * 0.25, transition: "opacity 300ms ease-out" }} />
+    </div>
+  );
+}

@@ -36,7 +36,7 @@ export function ThreeDBurger({ scrollY }: { scrollY: number }) {
     return () => window.removeEventListener("pointermove", onMove);
   }, []);
 
-  const progress = Math.min(Math.max(scrollY / 650, 0), 1);
+  const progress = Math.min(Math.max(scrollY / 280, 0), 1);
 
   return (
     <div
